@@ -51,7 +51,30 @@
       transform: translateY(-50%);
       z-index: 10;
       display: grid;
-      gap: 12px;
+      gap: 10px;
+    }
+
+    .side-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(8, 18, 37, 0.7);
+      border: 1px solid #2b436f;
+      border-radius: 999px;
+      padding: 6px 10px 6px 8px;
+      cursor: pointer;
+      transition: border-color .25s, background .25s;
+    }
+    .side-item:hover,
+    .side-item.active {
+      border-color: var(--teal);
+      background: rgba(18, 39, 73, 0.9);
+    }
+    .side-label {
+      font-size: .75rem;
+      color: #b8ccea;
+      letter-spacing: .04em;
+      white-space: nowrap;
     }
 
     .side-dot {
@@ -64,6 +87,7 @@
       cursor: pointer;
     }
 
+    .side-item.active .side-dot,
     .side-dot.active,
     .side-dot:hover { background: var(--teal); box-shadow: 0 0 12px #63d6e699; }
 
@@ -345,6 +369,19 @@
       background: var(--teal);
       position: relative;
     }
+    .flow-arrow-note {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(141, 79, 86, .3);
+      border: 1px solid #8d4f56;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: .82rem;
+      color: var(--rose);
+      white-space: nowrap;
+    }
     .flow-arrow::after {
       content: "▼";
       position: absolute;
@@ -410,6 +447,28 @@
       padding-top: 16px;
       border-bottom: 1px solid var(--line);
     }
+    .baseline-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .baseline-btn {
+      background: #12264a;
+      color: #d9e8ff;
+      border: 1px solid #2f4f86;
+      border-radius: 999px;
+      padding: 8px 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .baseline-btn.active {
+      background: var(--gold);
+      color: #1a2232;
+      border-color: var(--gold);
+    }
+    .baseline-panel { display: none; }
+    .baseline-panel.active { display: block; }
 
     /* === NEW: p-value annotation === */
     .p-annotation {
@@ -478,6 +537,7 @@
       .side-rail { display: none; }
       body { font-size: 16px; }
       .chart-wrap { height: 270px; }
+      .flow-arrow-note { position: static; transform: none; margin: 8px 0; white-space: normal; }
       .flow-exclude { position: static; transform: none; margin-top: 8px; }
       .flow-exclude::before { display: none; }
       .flow-box { max-width: 100%; }
@@ -486,15 +546,15 @@
 </head>
 <body class="stars">
   <nav class="side-rail" aria-label="Chapter navigation">
-    <button class="side-dot active" data-target="hero" aria-label="Cover"></button>
-    <button class="side-dot" data-target="chapter1" aria-label="Study Design"></button>
-    <button class="side-dot" data-target="chapter1b" aria-label="Baseline"></button>
-    <button class="side-dot" data-target="chapter2" aria-label="Key Results"></button>
-    <button class="side-dot" data-target="chapter3" aria-label="Safety"></button>
-    <button class="side-dot" data-target="chapter4" aria-label="Subgroups"></button>
-    <button class="side-dot" data-target="chapter5" aria-label="Trial Comparison"></button>
-    <button class="side-dot" data-target="chapter5b" aria-label="Discussion"></button>
-    <button class="side-dot" data-target="chapter6" aria-label="Strengths and Limitations"></button>
+    <button class="side-item active" data-target="hero" aria-label="Cover"><span class="side-dot"></span><span class="side-label">Cover</span></button>
+    <button class="side-item" data-target="chapter1" aria-label="Study Design"><span class="side-dot"></span><span class="side-label">Chapter I</span></button>
+    <button class="side-item" data-target="chapter1b" aria-label="Baseline"><span class="side-dot"></span><span class="side-label">Chapter I-B</span></button>
+    <button class="side-item" data-target="chapter2" aria-label="Key Results"><span class="side-dot"></span><span class="side-label">Chapter II</span></button>
+    <button class="side-item" data-target="chapter3" aria-label="Safety"><span class="side-dot"></span><span class="side-label">Chapter III</span></button>
+    <button class="side-item" data-target="chapter4" aria-label="Subgroups"><span class="side-dot"></span><span class="side-label">Chapter IV</span></button>
+    <button class="side-item" data-target="chapter5" aria-label="Trial Comparison"><span class="side-dot"></span><span class="side-label">Chapter V</span></button>
+    <button class="side-item" data-target="chapter5b" aria-label="Discussion"><span class="side-dot"></span><span class="side-label">Chapter V-B</span></button>
+    <button class="side-item" data-target="chapter6" aria-label="Strengths and Limitations"><span class="side-dot"></span><span class="side-label">Chapter VI</span></button>
   </nav>
 
   <header id="hero" class="container">
@@ -535,30 +595,12 @@
             <strong>171</strong>
             <span>Newly prescribed finerenone (first-time use)</span>
           </div>
-          <div class="flow-arrow"></div>
-          <div class="flow-box" style="position:relative;">
+          <div class="flow-arrow" style="position:relative;">
+            <div class="flow-arrow-note">Excluded: 5 patients with AKI or hyperkalemia within 1 month prior</div>
+          </div>
+          <div class="flow-box">
             <strong style="color:var(--gold);">166</strong>
             <span>Final analysis cohort</span>
-            <div class="flow-exclude">Excluded: 5 patients with AKI or hyperkalemia within 1 month prior</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Inclusion Criteria -->
-      <div class="panel">
-        <h3>Inclusion &amp; Exclusion Criteria</h3>
-        <div class="mini-grid">
-          <div class="mini-card">
-            <h4>Inclusion</h4>
-            <p>• Age ≥ 18 years with CKD diagnosis</p>
-            <p>• Visited Chi Mei Medical System during study period</p>
-            <p>• Baseline eGFR and UACR data available</p>
-            <p>• First-time finerenone prescription</p>
-          </div>
-          <div class="mini-card">
-            <h4>Exclusion</h4>
-            <p>• Acute kidney injury within 1 month before finerenone initiation</p>
-            <p>• Hyperkalemia within 1 month before finerenone initiation</p>
           </div>
         </div>
       </div>
@@ -592,34 +634,44 @@
         <small>Chapter I-B</small>
         <h2>Baseline Characteristics</h2>
       </div>
-      <p class="lead">Complete baseline demographics, comorbidities, medications, and laboratory data from Table 1 of the manuscript (N = 166).</p>
 
       <div class="panel" style="overflow-x:auto;">
-        <table class="baseline-table">
+        <div class="baseline-controls" role="tablist" aria-label="Baseline categories">
+          <button class="baseline-btn active" data-baseline="demographics">Demographics</button>
+          <button class="baseline-btn" data-baseline="clinical">Clinical Characteristics</button>
+          <button class="baseline-btn" data-baseline="history">Medical History</button>
+          <button class="baseline-btn" data-baseline="meds">Concomitant Medications</button>
+          <button class="baseline-btn" data-baseline="finerenone">Finerenone Details</button>
+          <button class="baseline-btn" data-baseline="source">Patient Source</button>
+          <button class="baseline-btn" data-baseline="lab">Laboratory Data</button>
+          <button class="baseline-btn" data-baseline="ckd">CKD Stage Distribution</button>
+        </div>
+        <table class="baseline-table baseline-panel active" id="baseline-demographics">
           <tbody>
-            <!-- Demographics -->
-            <tr class="section-row"><td colspan="2">Demographics</td></tr>
             <tr><td>Men, n (%)</td><td>128 (77.1%)</td></tr>
             <tr><td>Age, years</td><td>66.5 ± 11.3</td></tr>
-
-            <!-- Clinical -->
-            <tr class="section-row"><td colspan="2">Clinical Characteristics</td></tr>
+          </tbody>
+        </table>
+        <table class="baseline-table baseline-panel" id="baseline-clinical">
+          <tbody>
             <tr><td>BMI, kg/m²</td><td>26.5 ± 3.7</td></tr>
             <tr><td>Office SBP, mmHg</td><td>136.9 ± 23.1</td></tr>
             <tr><td>Office DBP, mmHg</td><td>79.3 ± 9.9</td></tr>
             <tr><td>LVEF, %</td><td>70.7 ± 11.8</td></tr>
-
-            <!-- Medical history -->
-            <tr class="section-row"><td colspan="2">Medical History</td></tr>
+          </tbody>
+        </table>
+        <table class="baseline-table baseline-panel" id="baseline-history">
+          <tbody>
             <tr><td>Hypertension</td><td>102 (61.4%)</td></tr>
             <tr><td>Diabetes mellitus</td><td>140 (84.3%)</td></tr>
             <tr><td>Dyslipidemia</td><td>118 (71.1%)</td></tr>
             <tr><td>Coronary artery disease</td><td>30 (18.1%)</td></tr>
             <tr><td>Cerebrovascular disease</td><td>29 (17.5%)</td></tr>
             <tr><td>Heart failure</td><td>31 (18.7%)</td></tr>
-
-            <!-- Medications -->
-            <tr class="section-row"><td colspan="2">Concomitant Medications</td></tr>
+          </tbody>
+        </table>
+        <table class="baseline-table baseline-panel" id="baseline-meds">
+          <tbody>
             <tr><td>RAAS blockers</td><td>143 (86.1%)</td></tr>
             <tr><td>SGLT2 inhibitors</td><td>121 (72.9%)</td></tr>
             <tr><td>GLP-1 analogs</td><td>25 (15.1%)</td></tr>
@@ -631,23 +683,26 @@
             <tr><td>Glinide</td><td>21 (12.7%)</td></tr>
             <tr><td>Lipid-lowering agents</td><td>141 (84.9%)</td></tr>
             <tr><td>Antiplatelet</td><td>92 (55.4%)</td></tr>
-
-            <!-- Finerenone -->
-            <tr class="section-row"><td colspan="2">Finerenone Details</td></tr>
+          </tbody>
+        </table>
+        <table class="baseline-table baseline-panel" id="baseline-finerenone">
+          <tbody>
             <tr><td>Initiation 10 mg/day</td><td>125 (74.9%)</td></tr>
             <tr><td>Initiation 20 mg/day</td><td>32 (19.2%)</td></tr>
             <tr><td>Prescription from Nephrology OPD</td><td>75 (45.2%)</td></tr>
             <tr><td>Prescription from Cardiology OPD</td><td>48 (28.9%)</td></tr>
             <tr><td>Prescription from Endocrinology OPD</td><td>41 (24.7%)</td></tr>
-
-            <!-- Patient source -->
-            <tr class="section-row"><td colspan="2">Patient Source</td></tr>
+          </tbody>
+        </table>
+        <table class="baseline-table baseline-panel" id="baseline-source">
+          <tbody>
             <tr><td>Medical center</td><td>123 (74.1%)</td></tr>
             <tr><td>Regional hospital</td><td>35 (21.1%)</td></tr>
             <tr><td>District hospital</td><td>8 (4.8%)</td></tr>
-
-            <!-- Lab -->
-            <tr class="section-row"><td colspan="2">Laboratory Data</td></tr>
+          </tbody>
+        </table>
+        <table class="baseline-table baseline-panel" id="baseline-lab">
+          <tbody>
             <tr><td>Serum creatinine, mg/dL</td><td>1.9 ± 1.0</td></tr>
             <tr><td>eGFR, mL/min/1.73m²</td><td>43.5 ± 24.9</td></tr>
             <tr><td>UACR, mg/g (median, IQR)</td><td>610.5 (133.5–1762.5)</td></tr>
@@ -657,9 +712,10 @@
             <tr><td>Serum sodium, mmol/L</td><td>138.9 ± 4.0</td></tr>
             <tr><td>Serum calcium, mg/dL</td><td>9.0 ± 0.6</td></tr>
             <tr><td>Serum phosphate, mg/dL</td><td>3.7 ± 0.7</td></tr>
-
-            <!-- CKD stage -->
-            <tr class="section-row"><td colspan="2">CKD Stage Distribution</td></tr>
+          </tbody>
+        </table>
+        <table class="baseline-table baseline-panel" id="baseline-ckd">
+          <tbody>
             <tr><td>Stage 1</td><td>9 (5.4%)</td></tr>
             <tr><td>Stage 2</td><td>25 (15.1%)</td></tr>
             <tr><td>Stage 3a</td><td>26 (15.7%)</td></tr>
@@ -1006,32 +1062,32 @@
         <small>Chapter V-B</small>
         <h2>Discussion Insights</h2>
       </div>
-      <p class="lead">Key interpretive findings from the manuscript discussion — why real-world results may differ from RCTs, and what they mean for clinical practice.</p>
+      <p class="lead">以下整理 manuscript 討論重點：為何 real-world 結果可能與 RCT 不同，以及對臨床決策的實務意義。</p>
 
       <div class="insight-grid">
         <div class="insight-card">
           <h4>Early eGFR Dip Is Hemodynamic</h4>
-          <p>The modest Friedman-significant eGFR trend with no significant pairwise changes is consistent with FINEARTS-HF data: an early, hemodynamically mediated dip that does not reflect irreversible renal damage. Creatinine doubling occurred in only 1.2%.</p>
+          <p>eGFR 在 Friedman test 呈現輕度變化，但各時間點 pairwise 比較未達顯著，與 FINEARTS-HF 所示一致：早期 hemodynamic dip 多屬可逆性血流動力學效應，非不可逆腎損傷。Creatinine doubling 僅 1.2%。</p>
         </div>
         <div class="insight-card">
           <h4>Why 22% vs 31% UACR Reduction?</h4>
-          <p>The attenuated UACR reduction compared to FIDELIO/FIGARO likely reflects: (1) more heterogeneous population; (2) 100% Asian cohort; (3) high concurrent SGLT2i (72.9%) and RAAS blocker (86.1%) use reducing additive benefit; (4) mostly 10 mg initiation with minimal titration.</p>
+          <p>相較 FIDELIO/FIGARO，UACR 降幅較小（約 22%）可能來自：(1) 族群異質性較高；(2) 全為亞洲族群；(3) 併用 SGLT2i（72.9%）與 RAAS blocker（86.1%）比例高，降低可額外觀察到的效益；(4) 多數以 10 mg 起始且 titration 較保守。</p>
         </div>
         <div class="insight-card">
           <h4>Taiwan Self-Pay Barrier</h4>
-          <p>Finerenone is not reimbursed under Taiwan's NHI and is fully self-paid, which likely contributed to conservative dosing (74.9% started at 10 mg) and limited dose escalation in clinical practice.</p>
+          <p>finerenone 目前在台灣健保下未給付，臨床上需自費，可能導致劑量策略偏保守（74.9% 由 10 mg 起始），且後續 dose escalation 較少。</p>
         </div>
         <div class="insight-card">
           <h4>Multidisciplinary Prescribing</h4>
-          <p>Prescriptions came from nephrology (45.2%), cardiology (28.9%), and endocrinology (24.7%) — reflecting finerenone's cross-specialty relevance for proteinuric CKD involving both renal and cardiovascular risk.</p>
+          <p>處方來源橫跨 nephrology（45.2%）、cardiology（28.9%）、endocrinology（24.7%），顯示 finerenone 在蛋白尿 CKD 合併腎臟與心血管風險時，具跨科共同照護價值。</p>
         </div>
         <div class="insight-card">
           <h4>Non-Diabetic CKD Signal</h4>
-          <p>15.7% of patients lacked diabetes, yet showed relatively low hyperkalemia incidence, suggesting finerenone may be well tolerated even beyond its FDA-approved diabetic CKD indication.</p>
+          <p>本隊列有 15.7% 非糖尿病 CKD 個案，且 hyperkalemia 發生率仍低，提示 finerenone 可能在超出目前 FDA diabetic CKD indication 的族群中，亦具可接受耐受性。</p>
         </div>
         <div class="insight-card">
           <h4>Subgroup: Baseline UACR Matters</h4>
-          <p>Women and DM patients had higher baseline UACR (Supplementary Table 1), which likely drove their greater UACR reductions — consistent with FIDELIO-DKD data showing more benefit in UACR &gt;300 mg/g subgroup (HR 0.83).</p>
+          <p>女性與 DM 族群 baseline UACR 較高（Supplementary Table 1），可能因此呈現較大 UACR 降幅；此現象也與 FIDELIO-DKD 在 UACR &gt;300 mg/g 亞組獲益較明顯（HR 0.83）的結果方向一致。</p>
         </div>
       </div>
     </section>
@@ -1047,24 +1103,24 @@
         <article class="pillar">
           <div class="pillar-head strength">Strengths</div>
           <ul>
-            <li>First multicenter real-world finerenone dataset from Taiwan (100% Asian cohort).</li>
-            <li>Includes both early and advanced CKD stages (Stage 1–5).</li>
-            <li>Broader population than classic RCTs: 15.7% non-diabetic CKD patients included.</li>
-            <li>Reflects multidisciplinary prescribing (nephrology, cardiology, endocrinology) in routine care.</li>
-            <li>Comprehensive safety monitoring with potassium stratification (K⁺ 5.0–6.0 vs &gt;6.0).</li>
-            <li>Addresses underrepresentation of Asian populations in FIDELIO/FIGARO (only 19.8–25.4% Asian).</li>
+            <li>本研究為台灣首批 multicenter real-world finerenone 資料（100% 亞洲族群）。</li>
+            <li>納入早期與晚期 CKD（Stage 1–5），涵蓋臨床常見病程光譜。</li>
+            <li>相較傳統 RCT，族群更廣：納入 15.7% 非糖尿病 CKD 個案。</li>
+            <li>呈現 routine care 的跨科處方型態（nephrology、cardiology、endocrinology）。</li>
+            <li>安全性監測完整，包含 potassium 分層（K⁺ 5.0–6.0 與 &gt;6.0）。</li>
+            <li>補足 FIDELIO、FIGARO 中亞洲族群代表性不足（19.8–25.4%）的證據缺口。</li>
           </ul>
         </article>
 
         <article class="pillar">
           <div class="pillar-head limit">Limitations</div>
           <ul>
-            <li>Retrospective single-cohort design with inherent selection/confounding bias.</li>
-            <li>Relatively small sample size (N=166), limiting subgroup power.</li>
-            <li>Short follow-up (mean 276.8 days) vs RCTs (2.6–3.4 years) — cannot assess long-term kidney or CV outcomes.</li>
-            <li>Incomplete UACR data at later timepoints due to real-world variability.</li>
-            <li>Single medical center system with no comparator group.</li>
-            <li>Potential confounders: dietary K⁺ intake, medication adherence, prescribing habit variation.</li>
+            <li>研究設計為 retrospective 單組 cohort，仍有 selection bias 與 confounding 無法完全排除。</li>
+            <li>樣本數相對有限（N=166），降低 subgroup analysis 的統計 power。</li>
+            <li>追蹤時間較短（平均 276.8 天），較難對比 RCT（2.6–3.4 年）之長期腎臟或心血管結局。</li>
+            <li>real-world 情境下，後續時間點 UACR 資料存在遺漏。</li>
+            <li>資料來自單一醫療體系，且缺乏 comparator group。</li>
+            <li>仍可能受飲食 potassium 攝取、用藥遵從性與醫師處方習慣差異影響。</li>
           </ul>
         </article>
       </div>
@@ -1072,7 +1128,7 @@
   </main>
 
   <footer>
-    Chi Mei Medical Center · Teaching Department & Evidence-Based Medicine Center
+    Chi Mei Medical Center · Teaching Department & General Internal Medicine
   </footer>
 
   <script>
@@ -1228,10 +1284,10 @@
 
     /* ====== Side Nav Scroll Tracking ====== */
     const sections = [...document.querySelectorAll('header[id], section[id]')];
-    const dots = [...document.querySelectorAll('.side-dot')];
+    const sideItems = [...document.querySelectorAll('.side-item')];
 
-    dots.forEach(dot => dot.addEventListener('click', () => {
-      document.getElementById(dot.dataset.target).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    sideItems.forEach(item => item.addEventListener('click', () => {
+      document.getElementById(item.dataset.target).scrollIntoView({ behavior: 'smooth', block: 'start' });
     }));
 
     window.addEventListener('scroll', () => {
@@ -1240,7 +1296,17 @@
         const top = sec.getBoundingClientRect().top;
         if (top < window.innerHeight * 0.35) current = sec.id;
       });
-      dots.forEach(dot => dot.classList.toggle('active', dot.dataset.target === current));
+      sideItems.forEach(item => item.classList.toggle('active', item.dataset.target === current));
+    });
+
+    /* ====== Baseline Interactive Panels ====== */
+    document.querySelectorAll('.baseline-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.baseline-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.baseline-panel').forEach(panel => panel.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(`baseline-${btn.dataset.baseline}`).classList.add('active');
+      });
     });
   </script>
 </body>
