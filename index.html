@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finerenone Clinical Intelligence Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3"></script>
+  <style>
+    :root {
+      --bg: #050c1d;
+      --panel: #0b162d;
+      --panel-soft: #101f3e;
+      --text: #e8f1ff;
+      --muted: #9db0cc;
+      --teal: #63d6e6;
+      --gold: #e3c784;
+      --rose: #e7a7a4;
+      --line: #1f335f;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Inter", system-ui, sans-serif;
+      background: radial-gradient(circle at 20% 10%, #0e2144 0%, var(--bg) 50%), var(--bg);
+      min-height: 100vh;
+      line-height: 1.7;
+      font-size: 17px;
+    }
+
+    .stars::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(#7ccfe566 1px, transparent 1px);
+      background-size: 160px 160px;
+      opacity: .5;
+    }
+
+    .side-rail {
+      position: fixed;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      display: grid;
+      gap: 12px;
+    }
+
+    .side-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid #4f6ea8;
+      background: transparent;
+      transition: all .25s;
+      cursor: pointer;
+    }
+
+    .side-dot.active,
+    .side-dot:hover { background: var(--teal); box-shadow: 0 0 12px #63d6e699; }
+
+    .container { width: min(1080px, calc(100% - 48px)); margin: 0 auto; }
+
+    header {
+      min-height: 85vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 64px 0 32px;
+    }
+
+    .label {
+      letter-spacing: .38em;
+      text-transform: uppercase;
+      color: var(--rose);
+      font-size: .74rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    h1, h2, h3 { margin: 0; }
+
+    h1 {
+      font-family: "Noto Serif TC", serif;
+      font-size: clamp(2.4rem, 8vw, 5.2rem);
+      line-height: 1.1;
+      letter-spacing: .02em;
+      text-wrap: balance;
+    }
+
+    .hero-sub {
+      color: #bfd0ea;
+      margin-top: 28px;
+      font-size: clamp(1.05rem, 2vw, 1.35rem);
+    }
+
+    .heartbeat {
+      width: min(860px, 100%);
+      margin: 42px auto 20px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--teal), transparent);
+      position: relative;
+    }
+
+    .heartbeat::after {
+      content: "";
+      position: absolute;
+      top: -12px;
+      left: 45%;
+      width: 80px;
+      height: 24px;
+      background: linear-gradient(90deg, transparent 0 25%, var(--teal) 25% 35%, transparent 35% 45%, var(--teal) 45% 55%, transparent 55%);
+      clip-path: polygon(0 50%, 20% 50%, 30% 20%, 40% 80%, 50% 20%, 60% 80%, 70% 50%, 100% 50%, 100% 100%, 0 100%);
+      opacity: .9;
+    }
+
+    section { padding: 54px 0; }
+
+    .chapter-title {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .chapter-title small {
+      letter-spacing: .45em;
+      text-transform: uppercase;
+      color: var(--teal);
+      display: block;
+      margin-bottom: 12px;
+      font-size: .72rem;
+      font-weight: 600;
+    }
+
+    .chapter-title h2 {
+      font-family: "Noto Serif TC", serif;
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      line-height: 1.2;
+    }
+
+    .lead {
+      color: var(--muted);
+      max-width: 920px;
+      margin: 0 auto 28px;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+
+    .kpi {
+      background: linear-gradient(155deg, #111d3a, #0b162d);
+      border: 1px solid #2f4576;
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform .25s, border-color .25s;
+    }
+
+    .kpi:hover,
+    .kpi[aria-expanded="true"] { transform: translateY(-3px); border-color: var(--teal); }
+
+    .kpi strong { display: block; font-size: 2rem; color: #f1f7ff; }
+    .kpi span { color: #b0c6e8; font-weight: 500; font-size: .95rem; }
+
+    .kpi-detail {
+      background: rgba(14, 33, 68, .7);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: #cde0ff;
+      display: none;
+      margin-bottom: 18px;
+    }
+
+    .panel {
+      background: linear-gradient(160deg, #0e1a34, #091226);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 16px;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
+    }
+
+    .panel h3 {
+      color: #d5e7ff;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      font-size: .8rem;
+      margin-bottom: 14px;
+    }
+
+    .chart-wrap { height: 320px; }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+    }
+
+    .mini-card {
+      border: 1px solid #2b3f6a;
+      border-radius: 12px;
+      padding: 14px;
+      background: rgba(10, 20, 40, .75);
+    }
+
+    .mini-card h4 { margin: 0 0 10px; color: var(--gold); font-size: 1rem; }
+    .mini-card p { margin: 2px 0; color: #d0ddf3; }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .filter-btn {
+      background: #12264a;
+      color: #d9e8ff;
+      border: 1px solid #2f4f86;
+      border-radius: 999px;
+      padding: 8px 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .filter-btn.active { background: var(--teal); color: #03252a; border-color: var(--teal); }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid #243a66; }
+    th { color: #afc6e8; text-align: left; font-size: .9rem; text-transform: uppercase; letter-spacing: .12em; }
+    td { color: #ebf2ff; }
+
+    .verdict {
+      margin-top: 32px;
+      border-left: 3px solid var(--teal);
+      padding-left: 16px;
+      color: #cde0ff;
+      font-size: 1.06rem;
+      background: #0a1731;
+      border-radius: 0 10px 10px 0;
+      padding: 18px;
+    }
+
+    .compare-table-wrap { overflow-x: auto; }
+    .compare-table {
+      min-width: 760px;
+      border: 1px solid #2d436f;
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(10, 20, 40, .75);
+    }
+    .compare-table th,
+    .compare-table td {
+      border-bottom: 1px solid #263d68;
+      border-right: 1px solid #263d68;
+      padding: 14px 12px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .compare-table th:first-child,
+    .compare-table td:first-child { text-align: left; }
+    .compare-table tr th:last-child,
+    .compare-table tr td:last-child { border-right: none; }
+
+    .highlight { color: var(--gold); font-weight: 700; }
+    .findings {
+      margin-top: 18px;
+      border-left: 4px solid var(--gold);
+      background: rgba(227, 199, 132, .08);
+      border-radius: 0 12px 12px 0;
+      padding: 16px 20px;
+    }
+    .findings h3 {
+      margin: 0 0 10px;
+      color: #f1d59e;
+      font-size: 1.05rem;
+      letter-spacing: .04em;
+    }
+    .findings ul { margin: 0; padding-left: 20px; }
+    .findings li { color: #dbe8ff; margin: 8px 0; }
+
+    .duo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .pillar {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #2b436f;
+      background: linear-gradient(160deg, #0d1a34, #0a142a);
+    }
+    .pillar-head {
+      padding: 14px 18px;
+      font-family: "Noto Serif TC", serif;
+      font-size: 1.35rem;
+      color: #fff;
+      letter-spacing: .04em;
+    }
+    .pillar-head.strength { background: #4e7d63; }
+    .pillar-head.limit { background: #8d4f56; }
+    .pillar ul { margin: 0; padding: 18px 22px 18px 38px; }
+    .pillar li { margin: 10px 0; color: #d9e7ff; }
+
+    footer { text-align: center; padding: 56px 0 70px; color: #93aacb; }
+
+    /* === NEW: Flowchart styles === */
+    .flowchart {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      padding: 24px 0;
+    }
+    .flow-box {
+      background: linear-gradient(155deg, #111d3a, #0b162d);
+      border: 1px solid #2f4576;
+      border-radius: 12px;
+      padding: 14px 24px;
+      text-align: center;
+      max-width: 520px;
+      width: 100%;
+      position: relative;
+    }
+    .flow-box strong { color: var(--teal); font-size: 1.5rem; display: block; }
+    .flow-box span { color: #b0c6e8; font-size: .92rem; }
+    .flow-arrow {
+      width: 2px;
+      height: 32px;
+      background: var(--teal);
+      position: relative;
+    }
+    .flow-arrow::after {
+      content: "▼";
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--teal);
+      font-size: .6rem;
+    }
+    .flow-exclude {
+      position: absolute;
+      right: -220px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(141, 79, 86, .3);
+      border: 1px solid #8d4f56;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: .82rem;
+      color: var(--rose);
+      white-space: nowrap;
+    }
+    .flow-exclude::before {
+      content: "→";
+      position: absolute;
+      left: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--rose);
+      font-size: 1rem;
+    }
+
+    /* === NEW: Baseline detail table === */
+    .baseline-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .baseline-table th {
+      text-align: left;
+      color: var(--teal);
+      font-size: .82rem;
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      padding: 12px 8px 6px;
+      border-bottom: 2px solid var(--line);
+    }
+    .baseline-table td {
+      padding: 7px 8px;
+      border-bottom: 1px solid rgba(31, 51, 95, .5);
+      color: #dbe8ff;
+      font-size: .95rem;
+    }
+    .baseline-table td:last-child {
+      text-align: right;
+      color: #f1f7ff;
+      font-weight: 500;
+    }
+    .baseline-table .section-row td {
+      color: var(--gold);
+      font-weight: 600;
+      font-size: .88rem;
+      letter-spacing: .06em;
+      padding-top: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    /* === NEW: p-value annotation === */
+    .p-annotation {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      font-size: .88rem;
+      color: var(--muted);
+    }
+    .p-annotation .sig { color: var(--teal); font-weight: 600; }
+    .p-annotation .ns { color: #8a9dbb; }
+
+    /* === NEW: Subgroup detail table with interaction p === */
+    .subgroup-detail-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+    }
+    .subgroup-detail-table th {
+      text-align: left;
+      color: #afc6e8;
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      padding: 10px 8px;
+      border-bottom: 2px solid var(--line);
+    }
+    .subgroup-detail-table td {
+      padding: 9px 8px;
+      border-bottom: 1px solid rgba(31, 51, 95, .5);
+      color: #ebf2ff;
+      font-size: .92rem;
+    }
+    .subgroup-detail-table .sig-cell { color: var(--teal); font-weight: 700; }
+
+    /* === NEW: Discussion insight cards === */
+    .insight-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .insight-card {
+      border: 1px solid #2b3f6a;
+      border-radius: 12px;
+      padding: 16px;
+      background: rgba(10, 20, 40, .75);
+    }
+    .insight-card h4 {
+      margin: 0 0 8px;
+      color: var(--teal);
+      font-size: .92rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+    .insight-card p {
+      margin: 0;
+      color: #c8daf3;
+      font-size: .93rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 880px) {
+      .side-rail { display: none; }
+      body { font-size: 16px; }
+      .chart-wrap { height: 270px; }
+      .flow-exclude { position: static; transform: none; margin-top: 8px; }
+      .flow-exclude::before { display: none; }
+      .flow-box { max-width: 100%; }
+    }
+  </style>
+</head>
+<body class="stars">
+  <nav class="side-rail" aria-label="Chapter navigation">
+    <button class="side-dot active" data-target="hero" aria-label="Cover"></button>
+    <button class="side-dot" data-target="chapter1" aria-label="Study Design"></button>
+    <button class="side-dot" data-target="chapter1b" aria-label="Baseline"></button>
+    <button class="side-dot" data-target="chapter2" aria-label="Key Results"></button>
+    <button class="side-dot" data-target="chapter3" aria-label="Safety"></button>
+    <button class="side-dot" data-target="chapter4" aria-label="Subgroups"></button>
+    <button class="side-dot" data-target="chapter5" aria-label="Trial Comparison"></button>
+    <button class="side-dot" data-target="chapter5b" aria-label="Discussion"></button>
+    <button class="side-dot" data-target="chapter6" aria-label="Strengths and Limitations"></button>
+  </nav>
+
+  <header id="hero" class="container">
+    <div>
+      <div class="label">Classified Clinical Investigation // Chi Mei Medical Center</div>
+      <h1>THE FINERENONE<br>FILES</h1>
+      <p class="hero-sub">166 patients, 3 hospital sites, and real-world evidence.<br>An interactive dashboard to interpret Finerenone clinical efficacy and safety.</p>
+      <div class="heartbeat" aria-hidden="true"></div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ==================== CHAPTER I: Study Design & Patient Selection ==================== -->
+    <section id="chapter1">
+      <div class="chapter-title">
+        <small>Chapter I</small>
+        <h2>Patient Selection & Study Design</h2>
+      </div>
+
+      <p class="lead">A multi-institutional retrospective single-cohort study across the Chi Mei Medical System (medical center, regional hospital, district hospital) in southern Taiwan. Study period: August 2023 – September 2024. IRB approval: No. 11203-002.</p>
+
+      <!-- Flowchart: Figure 1 -->
+      <div class="panel">
+        <h3>Figure 1 · Patient Selection Flowchart</h3>
+        <div class="flowchart">
+          <div class="flow-box">
+            <strong>7,026</strong>
+            <span>Adult CKD patients (≥18 y/o) visiting Chi Mei Medical System<br>Aug 2023 – Sep 2024</span>
+          </div>
+          <div class="flow-arrow"></div>
+          <div class="flow-box">
+            <strong>4,728</strong>
+            <span>With complete baseline eGFR & UACR data</span>
+          </div>
+          <div class="flow-arrow"></div>
+          <div class="flow-box">
+            <strong>171</strong>
+            <span>Newly prescribed finerenone (first-time use)</span>
+          </div>
+          <div class="flow-arrow"></div>
+          <div class="flow-box" style="position:relative;">
+            <strong style="color:var(--gold);">166</strong>
+            <span>Final analysis cohort</span>
+            <div class="flow-exclude">Excluded: 5 patients with AKI or hyperkalemia within 1 month prior</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inclusion Criteria -->
+      <div class="panel">
+        <h3>Inclusion &amp; Exclusion Criteria</h3>
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Inclusion</h4>
+            <p>• Age ≥ 18 years with CKD diagnosis</p>
+            <p>• Visited Chi Mei Medical System during study period</p>
+            <p>• Baseline eGFR and UACR data available</p>
+            <p>• First-time finerenone prescription</p>
+          </div>
+          <div class="mini-card">
+            <h4>Exclusion</h4>
+            <p>• Acute kidney injury within 1 month before finerenone initiation</p>
+            <p>• Hyperkalemia within 1 month before finerenone initiation</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI overview -->
+      <div class="kpi-grid">
+        <button class="kpi" data-detail="kpi-n"><strong>166</strong><span>Enrolled Patients</span></button>
+        <button class="kpi" data-detail="kpi-age"><strong>66.5</strong><span>Mean Age (y)</span></button>
+        <button class="kpi" data-detail="kpi-uacr"><strong>610.5</strong><span>Baseline UACR (mg/g)</span></button>
+        <button class="kpi" data-detail="kpi-egfr"><strong>43.5</strong><span>Baseline eGFR</span></button>
+        <button class="kpi" data-detail="kpi-fu"><strong>276.8</strong><span>Mean Follow-up (days)</span></button>
+        <button class="kpi" data-detail="kpi-male"><strong>77.1%</strong><span>Male</span></button>
+      </div>
+
+      <div id="kpi-n" class="kpi-detail">166 CKD patients across 3 Chi Mei hospitals — medical center (74.1%), regional hospital (21.1%), district hospital (4.8%).</div>
+      <div id="kpi-age" class="kpi-detail">Mean age 66.5 ± 11.3 years, reflecting a multimorbid, high-risk cohort aligned with real-world clinical care.</div>
+      <div id="kpi-uacr" class="kpi-detail">Median UACR 610.5 mg/g (IQR: 133.5–1762.5), indicating marked albuminuria across the cohort.</div>
+      <div id="kpi-egfr" class="kpi-detail">Baseline eGFR 43.5 ± 24.9 mL/min/1.73m² (MDRD equation), covering CKD stages 1–5.</div>
+      <div id="kpi-fu" class="kpi-detail">Mean follow-up of 276.8 days (approximately 9.2 months) through December 31, 2024.</div>
+      <div id="kpi-male" class="kpi-detail">128 males (77.1%) and 38 females (22.9%). Mean BMI 26.5 ± 3.7 kg/m².</div>
+
+      <div class="panel">
+        <h3>CKD Stage Distribution</h3>
+        <div class="chart-wrap"><canvas id="ckdChart"></canvas></div>
+      </div>
+    </section>
+
+    <!-- ==================== CHAPTER I-B: Baseline Characteristics ==================== -->
+    <section id="chapter1b">
+      <div class="chapter-title">
+        <small>Chapter I-B</small>
+        <h2>Baseline Characteristics</h2>
+      </div>
+      <p class="lead">Complete baseline demographics, comorbidities, medications, and laboratory data from Table 1 of the manuscript (N = 166).</p>
+
+      <div class="panel" style="overflow-x:auto;">
+        <table class="baseline-table">
+          <tbody>
+            <!-- Demographics -->
+            <tr class="section-row"><td colspan="2">Demographics</td></tr>
+            <tr><td>Men, n (%)</td><td>128 (77.1%)</td></tr>
+            <tr><td>Age, years</td><td>66.5 ± 11.3</td></tr>
+
+            <!-- Clinical -->
+            <tr class="section-row"><td colspan="2">Clinical Characteristics</td></tr>
+            <tr><td>BMI, kg/m²</td><td>26.5 ± 3.7</td></tr>
+            <tr><td>Office SBP, mmHg</td><td>136.9 ± 23.1</td></tr>
+            <tr><td>Office DBP, mmHg</td><td>79.3 ± 9.9</td></tr>
+            <tr><td>LVEF, %</td><td>70.7 ± 11.8</td></tr>
+
+            <!-- Medical history -->
+            <tr class="section-row"><td colspan="2">Medical History</td></tr>
+            <tr><td>Hypertension</td><td>102 (61.4%)</td></tr>
+            <tr><td>Diabetes mellitus</td><td>140 (84.3%)</td></tr>
+            <tr><td>Dyslipidemia</td><td>118 (71.1%)</td></tr>
+            <tr><td>Coronary artery disease</td><td>30 (18.1%)</td></tr>
+            <tr><td>Cerebrovascular disease</td><td>29 (17.5%)</td></tr>
+            <tr><td>Heart failure</td><td>31 (18.7%)</td></tr>
+
+            <!-- Medications -->
+            <tr class="section-row"><td colspan="2">Concomitant Medications</td></tr>
+            <tr><td>RAAS blockers</td><td>143 (86.1%)</td></tr>
+            <tr><td>SGLT2 inhibitors</td><td>121 (72.9%)</td></tr>
+            <tr><td>GLP-1 analogs</td><td>25 (15.1%)</td></tr>
+            <tr><td>Metformin</td><td>99 (59.6%)</td></tr>
+            <tr><td>DPP-4 inhibitors</td><td>89 (53.6%)</td></tr>
+            <tr><td>Insulin</td><td>47 (28.3%)</td></tr>
+            <tr><td>Sulfonylurea</td><td>75 (45.2%)</td></tr>
+            <tr><td>Thiazolidinedione</td><td>39 (23.5%)</td></tr>
+            <tr><td>Glinide</td><td>21 (12.7%)</td></tr>
+            <tr><td>Lipid-lowering agents</td><td>141 (84.9%)</td></tr>
+            <tr><td>Antiplatelet</td><td>92 (55.4%)</td></tr>
+
+            <!-- Finerenone -->
+            <tr class="section-row"><td colspan="2">Finerenone Details</td></tr>
+            <tr><td>Initiation 10 mg/day</td><td>125 (74.9%)</td></tr>
+            <tr><td>Initiation 20 mg/day</td><td>32 (19.2%)</td></tr>
+            <tr><td>Prescription from Nephrology OPD</td><td>75 (45.2%)</td></tr>
+            <tr><td>Prescription from Cardiology OPD</td><td>48 (28.9%)</td></tr>
+            <tr><td>Prescription from Endocrinology OPD</td><td>41 (24.7%)</td></tr>
+
+            <!-- Patient source -->
+            <tr class="section-row"><td colspan="2">Patient Source</td></tr>
+            <tr><td>Medical center</td><td>123 (74.1%)</td></tr>
+            <tr><td>Regional hospital</td><td>35 (21.1%)</td></tr>
+            <tr><td>District hospital</td><td>8 (4.8%)</td></tr>
+
+            <!-- Lab -->
+            <tr class="section-row"><td colspan="2">Laboratory Data</td></tr>
+            <tr><td>Serum creatinine, mg/dL</td><td>1.9 ± 1.0</td></tr>
+            <tr><td>eGFR, mL/min/1.73m²</td><td>43.5 ± 24.9</td></tr>
+            <tr><td>UACR, mg/g (median, IQR)</td><td>610.5 (133.5–1762.5)</td></tr>
+            <tr><td>HbA1c, %</td><td>6.8 ± 1.7</td></tr>
+            <tr><td>Serum albumin, g/dL</td><td>3.9 ± 0.5</td></tr>
+            <tr><td>Serum potassium, mmol/L</td><td>4.2 ± 0.5</td></tr>
+            <tr><td>Serum sodium, mmol/L</td><td>138.9 ± 4.0</td></tr>
+            <tr><td>Serum calcium, mg/dL</td><td>9.0 ± 0.6</td></tr>
+            <tr><td>Serum phosphate, mg/dL</td><td>3.7 ± 0.7</td></tr>
+
+            <!-- CKD stage -->
+            <tr class="section-row"><td colspan="2">CKD Stage Distribution</td></tr>
+            <tr><td>Stage 1</td><td>9 (5.4%)</td></tr>
+            <tr><td>Stage 2</td><td>25 (15.1%)</td></tr>
+            <tr><td>Stage 3a</td><td>26 (15.7%)</td></tr>
+            <tr><td>Stage 3b</td><td>51 (30.7%)</td></tr>
+            <tr><td>Stage 4</td><td>48 (28.9%)</td></tr>
+            <tr><td>Stage 5</td><td>7 (4.2%)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== CHAPTER II: Renal Outcomes ==================== -->
+    <section id="chapter2">
+      <div class="chapter-title">
+        <small>Chapter II</small>
+        <h2>Renal Outcomes & Trend Charts</h2>
+      </div>
+      <p class="lead">Primary outcomes: changes in eGFR and UACR at Day 30, 90, and 180 after finerenone initiation. Statistics: Wilcoxon signed-rank test (pairwise) and Friedman test (overall trend).</p>
+
+      <div class="panel">
+        <h3>UACR Reduction Trajectory</h3>
+        <div class="chart-wrap"><canvas id="uacrChart"></canvas></div>
+        <div class="p-annotation">
+          <span class="sig">Day 30 vs Baseline: p = 0.015 *</span>
+          <span class="sig">Day 90: p &lt; 0.001 ***</span>
+          <span class="sig">Day 180: p = 0.001 **</span>
+          <span class="sig">Friedman trend: p = 0.002</span>
+        </div>
+      </div>
+
+      <!-- LS Mean analysis -->
+      <div class="panel">
+        <h3>Log-Transformed UACR · LS Mean Analysis (Repeated Measures ANCOVA)</h3>
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Baseline LS Mean (logUACR)</h4>
+            <p style="font-size:1.4rem;color:var(--gold);font-weight:700;">6.08</p>
+            <p>95% CI: 5.75 – 6.41</p>
+          </div>
+          <div class="mini-card">
+            <h4>Day 90 LS Mean (logUACR)</h4>
+            <p style="font-size:1.4rem;color:var(--teal);font-weight:700;">5.83</p>
+            <p>95% CI: 5.49 – 6.17</p>
+          </div>
+          <div class="mini-card">
+            <h4>Mean Ratio (exp[ΔlogUACR])</h4>
+            <p style="font-size:1.4rem;color:var(--rose);font-weight:700;">0.78</p>
+            <p>= Average 22% reduction from baseline</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>eGFR Stability Trend</h3>
+        <div class="chart-wrap"><canvas id="egfrChart"></canvas></div>
+        <div class="p-annotation">
+          <span class="ns">Day 30 vs Baseline: p = 0.134</span>
+          <span class="ns">Day 90: p = 0.219</span>
+          <span class="ns">Day 180: p = 0.078</span>
+          <span class="sig">Friedman trend: p = 0.006 (modest)</span>
+        </div>
+      </div>
+
+      <!-- Table 2: eGFR & UACR summary -->
+      <div class="panel" style="overflow-x:auto;">
+        <h3>Table 2 · Changes in eGFR and UACR After Finerenone Use</h3>
+        <table class="compare-table" style="min-width:700px;">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Baseline</th>
+              <th>Day 30</th>
+              <th>Day 90</th>
+              <th>Day 180</th>
+              <th>p (trend)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:left;">eGFR (mean ± SD)</td>
+              <td>43.5 ± 24.9</td>
+              <td>43.1 ± 25.1</td>
+              <td>43.1 ± 24.9</td>
+              <td>43.3 ± 24.8</td>
+              <td class="highlight">0.006</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">UACR (median, IQR)</td>
+              <td>610.5<br><small style="color:var(--muted);">(133.5–1762.5)</small></td>
+              <td>531.9<br><small style="color:var(--muted);">(103.1–1758.4)</small></td>
+              <td>452.7<br><small style="color:var(--muted);">(95.4–1522.5)</small></td>
+              <td>332.1<br><small style="color:var(--muted);">(102.1–1656.1)</small></td>
+              <td class="highlight">0.002</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ==================== CHAPTER III: Safety ==================== -->
+    <section id="chapter3">
+      <div class="chapter-title">
+        <small>Chapter III</small>
+        <h2>Clinical Events & Safety</h2>
+      </div>
+
+      <!-- Table 3: Safety outcomes -->
+      <div class="panel">
+        <h3>Table 3 · Hyperkalemia &amp; Creatinine Doubling</h3>
+        <div class="mini-grid">
+          <article class="mini-card">
+            <h4>Overall Hyperkalemia (K⁺ &gt;5.0)</h4>
+            <p style="font-size:1.6rem;color:var(--gold);font-weight:700;">32 (19.3%)</p>
+          </article>
+          <article class="mini-card">
+            <h4>Mild (K⁺ 5.0–6.0)</h4>
+            <p style="font-size:1.6rem;color:var(--teal);font-weight:700;">29 (17.5%)</p>
+          </article>
+          <article class="mini-card">
+            <h4>Severe (K⁺ &gt;6.0)</h4>
+            <p style="font-size:1.6rem;color:var(--rose);font-weight:700;">3 (1.8%)</p>
+          </article>
+          <article class="mini-card">
+            <h4>Creatinine Doubling</h4>
+            <p style="font-size:1.6rem;color:#f1f7ff;font-weight:700;">2 (1.2%)</p>
+          </article>
+        </div>
+      </div>
+
+      <div class="mini-grid">
+        <article class="mini-card">
+          <h4>All-Cause Mortality</h4><p>1.2%（2/166）</p>
+        </article>
+        <article class="mini-card">
+          <h4>Nonfatal MI</h4><p>0.6%（1/166）</p>
+        </article>
+        <article class="mini-card">
+          <h4>Hospitalization</h4><p>12.7%（21/166）</p>
+        </article>
+        <article class="mini-card">
+          <h4>AKI</h4><p>1.2%（2/166）</p>
+        </article>
+      </div>
+
+      <div class="panel" style="margin-top:16px;">
+        <h3>Hyperkalemia Severity Distribution</h3>
+        <div class="chart-wrap"><canvas id="kChart"></canvas></div>
+      </div>
+    </section>
+
+    <!-- ==================== CHAPTER IV: Subgroup Analysis ==================== -->
+    <section id="chapter4">
+      <div class="chapter-title">
+        <small>Chapter IV</small>
+        <h2>Subgroup Analysis</h2>
+      </div>
+      <p class="lead">Subgroup analyses by sex, DM status, finerenone initiation dose, and CKD stage. Interaction p values test whether treatment effects differ between subgroups.</p>
+
+      <!-- Table 4: Interaction p values -->
+      <div class="panel">
+        <h3>Table 4 · Friedman Trend &amp; Interaction P Values</h3>
+        <div style="overflow-x:auto;">
+          <table class="subgroup-detail-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Subgroup</th>
+                <th>eGFR p (trend)</th>
+                <th>eGFR p (interaction)</th>
+                <th>UACR p (trend)</th>
+                <th>UACR p (interaction)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td rowspan="2" style="color:var(--gold);">Sex</td>
+                <td>Male</td><td>0.107</td><td rowspan="2">0.466</td><td>0.077</td><td rowspan="2" class="sig-cell">0.003</td>
+              </tr>
+              <tr>
+                <td>Female</td><td>0.023</td><td>0.014</td>
+              </tr>
+              <tr>
+                <td rowspan="2" style="color:var(--gold);">DM Status</td>
+                <td>DM</td><td>0.007</td><td rowspan="2">0.998</td><td>0.004</td><td rowspan="2" class="sig-cell">0.008</td>
+              </tr>
+              <tr>
+                <td>Non-DM</td><td>0.752</td><td>0.097</td>
+              </tr>
+              <tr>
+                <td rowspan="2" style="color:var(--gold);">Dose</td>
+                <td>10 mg</td><td>0.011</td><td rowspan="2">0.517</td><td>0.160</td><td rowspan="2">0.240</td>
+              </tr>
+              <tr>
+                <td>20 mg</td><td>0.344</td><td>&lt;0.001</td>
+              </tr>
+              <tr>
+                <td rowspan="2" style="color:var(--gold);">CKD Stage</td>
+                <td>Early (1/2/3a)</td><td>0.177</td><td rowspan="2">0.223</td><td>0.250</td><td rowspan="2">0.946</td>
+              </tr>
+              <tr>
+                <td>Advanced (3b/4/5)</td><td>0.024</td><td>0.006</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="findings">
+        <h3>Key Subgroup Findings</h3>
+        <ul>
+          <li><strong>UACR reduction was significantly greater in women</strong> (p interaction = 0.003) and <strong>diabetic patients</strong> (p interaction = 0.008), likely reflecting higher baseline UACR in these groups.</li>
+          <li>eGFR trajectories did not differ significantly by any subgroup (all interaction p &gt; 0.2).</li>
+          <li>No significant interaction for initial finerenone dose (10 mg vs 20 mg) or CKD stage on either outcome.</li>
+        </ul>
+      </div>
+
+      <!-- Interactive subgroup switcher (original feature) -->
+      <div class="panel" style="margin-top:16px;">
+        <h3>Interactive Subgroup Explorer</h3>
+        <div class="filter-row" role="tablist" aria-label="Subgroup Filter">
+          <button class="filter-btn active" data-group="ckd">CKD Stage</button>
+          <button class="filter-btn" data-group="sex">Sex</button>
+          <button class="filter-btn" data-group="dm">Diabetes</button>
+          <button class="filter-btn" data-group="sglt2">SGLT2i</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Subgroup Comparison</th>
+              <th>UACR Change</th>
+              <th>Hyperkalemia Incidence</th>
+              <th>P Value</th>
+            </tr>
+          </thead>
+          <tbody id="subgroupBody"></tbody>
+        </table>
+      </div>
+
+      <div class="verdict">
+        Conclusion: In real-world practice, Finerenone shows <strong>stable eGFR, significant UACR reduction, and predominantly mild hyperkalemia</strong>, with consistent direction across most subgroups. Women and diabetic patients showed significantly greater UACR reduction.
+      </div>
+    </section>
+
+    <!-- ==================== CHAPTER V: Trial Comparison ==================== -->
+    <section id="chapter5">
+      <div class="chapter-title">
+        <small>Chapter V</small>
+        <h2>Comparison with Pivotal Trials</h2>
+      </div>
+
+      <div class="panel compare-table-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>This Study</th>
+              <th>FIDELIO-DKD</th>
+              <th>FIGARO-DKD</th>
+              <th>FIDELITY</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>N</td>
+              <td class="highlight">166</td>
+              <td>5,674</td>
+              <td>7,437</td>
+              <td>13,026</td>
+            </tr>
+            <tr>
+              <td>Mean eGFR</td>
+              <td class="highlight">43.5</td>
+              <td>44.3</td>
+              <td>67.8</td>
+              <td>57.6</td>
+            </tr>
+            <tr>
+              <td>DM prevalence</td>
+              <td class="highlight">84.3%</td>
+              <td>100%</td>
+              <td>100%</td>
+              <td>100%</td>
+            </tr>
+            <tr>
+              <td>Asian patients</td>
+              <td class="highlight">100%</td>
+              <td>25.4%</td>
+              <td>19.8%</td>
+              <td>22.2%</td>
+            </tr>
+            <tr>
+              <td>SGLT2i use</td>
+              <td class="highlight">72.9%</td>
+              <td>4.6%</td>
+              <td>6.9%</td>
+              <td>~5.7%</td>
+            </tr>
+            <tr>
+              <td>UACR reduction</td>
+              <td class="highlight">~22% (Day 90)</td>
+              <td>~31% (4 mo)</td>
+              <td>~32% (4 mo)</td>
+              <td>~32%</td>
+            </tr>
+            <tr>
+              <td>Hyperkalemia</td>
+              <td class="highlight">19.3%</td>
+              <td>15.8%</td>
+              <td>10.8%</td>
+              <td>14.0%</td>
+            </tr>
+            <tr>
+              <td>Severe HK (K&gt;6)</td>
+              <td class="highlight">1.8%</td>
+              <td>1.6%</td>
+              <td>0.6%</td>
+              <td>1.1%</td>
+            </tr>
+            <tr>
+              <td>Median follow-up</td>
+              <td class="highlight">~9.2 mo</td>
+              <td>2.6 yr</td>
+              <td>3.4 yr</td>
+              <td>3.0 yr</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="findings">
+          <h3>Key Findings</h3>
+          <ul>
+            <li>UACR reduction of ~22% at Day 90 (LS mean ratio 0.78), modest compared to ~31–32% in RCTs — likely attenuated by high concurrent SGLT2i/GLP-1 use and mostly 10 mg dosing.</li>
+            <li>Hyperkalemia predominantly mild (17.5% K⁺ 5.0–6.0); severe rate comparable to FIDELITY (1.8% vs 1.1%).</li>
+            <li>Broader clinical spectrum: 100% Asian cohort, 15.7% non-diabetic CKD — underrepresented in pivotal trials.</li>
+            <li>Concurrent SGLT2i use (72.9%) far exceeds RCT levels (4.6–6.9%), reflecting contemporary standard of care.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CHAPTER V-B: Discussion Insights ==================== -->
+    <section id="chapter5b">
+      <div class="chapter-title">
+        <small>Chapter V-B</small>
+        <h2>Discussion Insights</h2>
+      </div>
+      <p class="lead">Key interpretive findings from the manuscript discussion — why real-world results may differ from RCTs, and what they mean for clinical practice.</p>
+
+      <div class="insight-grid">
+        <div class="insight-card">
+          <h4>Early eGFR Dip Is Hemodynamic</h4>
+          <p>The modest Friedman-significant eGFR trend with no significant pairwise changes is consistent with FINEARTS-HF data: an early, hemodynamically mediated dip that does not reflect irreversible renal damage. Creatinine doubling occurred in only 1.2%.</p>
+        </div>
+        <div class="insight-card">
+          <h4>Why 22% vs 31% UACR Reduction?</h4>
+          <p>The attenuated UACR reduction compared to FIDELIO/FIGARO likely reflects: (1) more heterogeneous population; (2) 100% Asian cohort; (3) high concurrent SGLT2i (72.9%) and RAAS blocker (86.1%) use reducing additive benefit; (4) mostly 10 mg initiation with minimal titration.</p>
+        </div>
+        <div class="insight-card">
+          <h4>Taiwan Self-Pay Barrier</h4>
+          <p>Finerenone is not reimbursed under Taiwan's NHI and is fully self-paid, which likely contributed to conservative dosing (74.9% started at 10 mg) and limited dose escalation in clinical practice.</p>
+        </div>
+        <div class="insight-card">
+          <h4>Multidisciplinary Prescribing</h4>
+          <p>Prescriptions came from nephrology (45.2%), cardiology (28.9%), and endocrinology (24.7%) — reflecting finerenone's cross-specialty relevance for proteinuric CKD involving both renal and cardiovascular risk.</p>
+        </div>
+        <div class="insight-card">
+          <h4>Non-Diabetic CKD Signal</h4>
+          <p>15.7% of patients lacked diabetes, yet showed relatively low hyperkalemia incidence, suggesting finerenone may be well tolerated even beyond its FDA-approved diabetic CKD indication.</p>
+        </div>
+        <div class="insight-card">
+          <h4>Subgroup: Baseline UACR Matters</h4>
+          <p>Women and DM patients had higher baseline UACR (Supplementary Table 1), which likely drove their greater UACR reductions — consistent with FIDELIO-DKD data showing more benefit in UACR &gt;300 mg/g subgroup (HR 0.83).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CHAPTER VI: Strengths & Limitations ==================== -->
+    <section id="chapter6">
+      <div class="chapter-title">
+        <small>Chapter VI</small>
+        <h2>Strengths &amp; Limitations</h2>
+      </div>
+
+      <div class="duo-grid">
+        <article class="pillar">
+          <div class="pillar-head strength">Strengths</div>
+          <ul>
+            <li>First multicenter real-world finerenone dataset from Taiwan (100% Asian cohort).</li>
+            <li>Includes both early and advanced CKD stages (Stage 1–5).</li>
+            <li>Broader population than classic RCTs: 15.7% non-diabetic CKD patients included.</li>
+            <li>Reflects multidisciplinary prescribing (nephrology, cardiology, endocrinology) in routine care.</li>
+            <li>Comprehensive safety monitoring with potassium stratification (K⁺ 5.0–6.0 vs &gt;6.0).</li>
+            <li>Addresses underrepresentation of Asian populations in FIDELIO/FIGARO (only 19.8–25.4% Asian).</li>
+          </ul>
+        </article>
+
+        <article class="pillar">
+          <div class="pillar-head limit">Limitations</div>
+          <ul>
+            <li>Retrospective single-cohort design with inherent selection/confounding bias.</li>
+            <li>Relatively small sample size (N=166), limiting subgroup power.</li>
+            <li>Short follow-up (mean 276.8 days) vs RCTs (2.6–3.4 years) — cannot assess long-term kidney or CV outcomes.</li>
+            <li>Incomplete UACR data at later timepoints due to real-world variability.</li>
+            <li>Single medical center system with no comparator group.</li>
+            <li>Potential confounders: dietary K⁺ intake, medication adherence, prescribing habit variation.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Chi Mei Medical Center · Teaching Department & Evidence-Based Medicine Center
+  </footer>
+
+  <script>
+    /* ====== Charts ====== */
+    const commonOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#d3e4ff', font: { size: 13 } } }
+      },
+      scales: {
+        x: { ticks: { color: '#b3c8e8' }, grid: { color: '#1f335f' } },
+        y: { ticks: { color: '#b3c8e8' }, grid: { color: '#1f335f' } }
+      }
+    };
+
+    new Chart(document.getElementById('ckdChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Stage 1\n(5.4%)', 'Stage 2\n(15.1%)', 'Stage 3a\n(15.7%)', 'Stage 3b\n(30.7%)', 'Stage 4\n(28.9%)', 'Stage 5\n(4.2%)'],
+        datasets: [{
+          label: 'Count',
+          data: [9, 25, 26, 51, 48, 7],
+          backgroundColor: ['#6dd5c8', '#79c2c2', '#66b6cc', '#3f9fbd', '#d99b91', '#cf6f73'],
+          borderRadius: 6
+        }]
+      },
+      options: commonOptions
+    });
+
+    new Chart(document.getElementById('uacrChart'), {
+      type: 'line',
+      data: {
+        labels: ['Baseline', 'Day 30', 'Day 90', 'Day 180'],
+        datasets: [{
+          label: 'UACR median (mg/g)',
+          data: [610.5, 531.9, 452.7, 332.1],
+          tension: 0.35,
+          borderColor: '#63d6e6',
+          backgroundColor: 'rgba(99,214,230,.2)',
+          fill: true,
+          pointRadius: 6,
+          pointBackgroundColor: '#e8f1ff',
+          pointBorderColor: '#63d6e6',
+          pointBorderWidth: 2
+        }]
+      },
+      options: commonOptions
+    });
+
+    new Chart(document.getElementById('egfrChart'), {
+      type: 'line',
+      data: {
+        labels: ['Baseline', 'Day 30', 'Day 90', 'Day 180'],
+        datasets: [{
+          label: 'eGFR mean (mL/min/1.73m²)',
+          data: [43.5, 43.1, 43.1, 43.3],
+          borderColor: '#e3c784',
+          backgroundColor: 'rgba(227,199,132,.15)',
+          fill: true,
+          tension: 0.2,
+          pointRadius: 5,
+          pointBackgroundColor: '#e8f1ff',
+          pointBorderColor: '#e3c784',
+          pointBorderWidth: 2
+        }]
+      },
+      options: {
+        ...commonOptions,
+        scales: {
+          ...commonOptions.scales,
+          y: {
+            ...commonOptions.scales.y,
+            min: 40,
+            max: 47
+          }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('kChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['No Hyperkalemia (80.7%)', 'Mild K⁺ 5.0–6.0 (17.5%)', 'Severe K⁺ >6.0 (1.8%)'],
+        datasets: [{
+          data: [80.7, 17.5, 1.8],
+          backgroundColor: ['#274d7f', '#e3c784', '#de717a'],
+          borderColor: '#081325',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: '#d3e4ff', font: { size: 13 } } }
+        }
+      }
+    });
+
+    /* ====== Subgroup Interactive Table ====== */
+    const subgroups = {
+      ckd: [
+        ['Early CKD (Stage 1/2/3a, n=60)', '+0.5% vs -8.2%', '18.3% vs 19.8%', '0.946']
+      ],
+      sex: [
+        ['Male (n=128) vs Female (n=38)', '-2.4% vs -12.0%', '17.2% vs 26.3%', '0.003']
+      ],
+      dm: [
+        ['With DM (n=140) vs Without (n=26)', '-3.6% vs -21.0%', '20.0% vs 15.4%', '0.008']
+      ],
+      sglt2: [
+        ['With SGLT2i (n=121) vs Without (n=45)', '-4.7% vs -5.1%', '17.4% vs 24.4%', '0.755']
+      ]
+    };
+
+    const body = document.getElementById('subgroupBody');
+    function renderSubgroup(key) {
+      body.innerHTML = subgroups[key].map(row => {
+        const pVal = parseFloat(row[3]);
+        const sigClass = pVal < 0.05 ? 'sig-cell' : '';
+        return `<tr>
+          <td>${row[0]}</td>
+          <td>${row[1]}</td>
+          <td>${row[2]}</td>
+          <td class="${sigClass}">${row[3]}${pVal < 0.05 ? ' *' : ''}</td>
+        </tr>`;
+      }).join('');
+    }
+    renderSubgroup('ckd');
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderSubgroup(btn.dataset.group);
+      });
+    });
+
+    /* ====== KPI Expand/Collapse ====== */
+    document.querySelectorAll('.kpi').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.detail);
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        document.querySelectorAll('.kpi-detail').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.kpi').forEach(el => el.setAttribute('aria-expanded', 'false'));
+        if (!expanded) {
+          target.style.display = 'block';
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+
+    /* ====== Side Nav Scroll Tracking ====== */
+    const sections = [...document.querySelectorAll('header[id], section[id]')];
+    const dots = [...document.querySelectorAll('.side-dot')];
+
+    dots.forEach(dot => dot.addEventListener('click', () => {
+      document.getElementById(dot.dataset.target).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }));
+
+    window.addEventListener('scroll', () => {
+      let current = sections[0].id;
+      sections.forEach(sec => {
+        const top = sec.getBoundingClientRect().top;
+        if (top < window.innerHeight * 0.35) current = sec.id;
+      });
+      dots.forEach(dot => dot.classList.toggle('active', dot.dataset.target === current));
+    });
+  </script>
+</body>
+</html>
