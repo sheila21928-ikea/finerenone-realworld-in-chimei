@@ -46,25 +46,25 @@
 
     .side-rail {
       position: fixed;
-      left: 10px;
+      left: 6px;
       top: 50%;
       transform: translateY(-50%);
       z-index: 10;
       display: grid;
-      gap: 8px;
+      gap: 6px;
     }
 
     .side-item {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       background: rgba(8, 18, 37, 0.7);
       border: 1px solid #2b436f;
       border-radius: 999px;
-      padding: 5px 9px 5px 7px;
+      padding: 4px 7px 4px 6px;
       cursor: pointer;
       transition: border-color .25s, background .25s;
-      max-width: 168px;
+      max-width: 132px;
     }
     .side-item:hover,
     .side-item.active {
@@ -72,7 +72,7 @@
       background: rgba(18, 39, 73, 0.9);
     }
     .side-label {
-      font-size: .68rem;
+      font-size: .62rem;
       color: #b8ccea;
       letter-spacing: .04em;
       white-space: nowrap;
@@ -509,7 +509,7 @@
     .stage-metric {
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 8px;
+      gap: 6px;
       padding: 8px 0;
       border-bottom: 1px solid rgba(59, 84, 125, .35);
       color: #d8e7ff;
@@ -586,6 +586,7 @@
     }
     .typing-glow {
       min-height: 28px;
+      white-space: pre-line;
       color: #c6f9ff;
       text-shadow: 0 0 10px rgba(99, 214, 230, .75);
       letter-spacing: .04em;
@@ -763,7 +764,7 @@
         <h2>Patient Selection & Study Design</h2>
       </div>
 
-      <p class="lead">A multi-institutional retrospective single-cohort study across the Chi Mei Medical System (medical center, regional hospital, district hospital) in southern Taiwan. Study period: August 2023 – September 2024. IRB approval: No. 11203-002.</p>
+      <p class="lead">A multi-institutional retrospective single-cohort study across the Chi Mei Medical System (medical center, regional hospital, district hospital) in southern Taiwan. Study period: August 2023 – September 2024.</p>
 
       <!-- Flowchart: Figure 1 -->
       <div class="panel">
@@ -933,11 +934,11 @@
         <div id="whyReductionBox" class="explain-box hidden">
           相較 FIDELIO (31%)/FIGARO (32%)，UACR 降幅較小，可能原因：
           <ul>
-            <li>(1) 族群異質性較高</li>
-            <li>(2) 本篇全為亞洲族群 (100%)，FIDELIO (25.4%) / FIGARO (19.8%)</li>
-            <li>(3) 併用 SGLT2i 高達 72.9%，FIDELIO (25.4%) / FIGARO (19.8%)，降低可額外觀察到的效益</li>
-            <li>(4) 多數以 10 mg 起始且 titration 較保守，與 RCT 中多數 titrate 到 20 mg 不同</li>
-            <li>(5) Real-world 下的用藥順從性和 follow-up 變異也較大</li>
+            <li>族群異質性較高</li>
+            <li>本篇全為亞洲族群 (100%)，FIDELIO (25.4%) / FIGARO (19.8%)</li>
+            <li>併用 SGLT2i 高達 72.9%，FIDELIO (25.4%) / FIGARO (19.8%)，降低可額外觀察到的效益</li>
+            <li>多數以 10 mg 起始且 titration 較保守，與 RCT 中多數 titrate 到 20 mg 不同</li>
+            <li>Real-world 下的用藥順從性和 follow-up 變異也較大</li>
           </ul>
         </div>
       </div>
@@ -978,7 +979,9 @@
       </div>
 
       <div class="panel">
-        <h3>eGFR Stability Trend</h3>
+        <h3>eGFR Stability</h3>
+        <button class="section-toggle-btn" id="egfrStabilityBtn">EGFR STABILITY</button>
+        <p id="egfrStabilityText" class="typing-glow"></p>
         <div class="chart-wrap"><canvas id="egfrChart"></canvas></div>
         <div class="p-annotation">
           <span class="ns">Day 30 vs Baseline: p = 0.134</span>
@@ -1270,7 +1273,7 @@
         </div>
         <div class="insight-card">
           <h4>Why 22% vs 31% UACR Reduction?</h4>
-          <p>相較 FIDELIO/FIGARO，UACR 降幅較小（約 22%）可能來自：(1) 族群異質性較高；(2) 全為亞洲族群；(3) 併用 SGLT2i（72.9%）與 RAAS blocker（86.1%）比例高，降低可額外觀察到的效益；(4) 多數以 10 mg 起始且 titration 較保守。</p>
+          <p>相較 FIDELIO/FIGARO，UACR 降幅較小（約 22%）可能來自：族群異質性較高；全為亞洲族群；併用 SGLT2i（72.9%）與 RAAS blocker（86.1%）比例高，降低可額外觀察到的效益；多數以 10 mg 起始且 titration 較保守。</p>
         </div>
         <div class="insight-card">
           <h4>Taiwan Self-Pay Barrier</h4>
@@ -1523,6 +1526,21 @@
         i += 1;
         if (i >= uacrSentence.length) clearInterval(typer);
       }, 70);
+    });
+
+    const egfrStabilityBtn = document.getElementById('egfrStabilityBtn');
+    const egfrStabilityText = document.getElementById('egfrStabilityText');
+    const egfrSentence = `EARLY EGFR DIP IS HEMODYNAMIC
+eGFR 在 Friedman test 呈現輕度變化，但各時間點 pairwise 比較未達顯著，與 FINEARTS-HF 以及CONFIDENCE 所顯示的早期 hemodynamic effect一致，eGFR dip 多屬可逆性血流動力學效應，非不可逆腎損傷。Creatinine doubling 僅 1.2%。`;
+
+    egfrStabilityBtn?.addEventListener('click', () => {
+      egfrStabilityText.textContent = '';
+      let i = 0;
+      const typer = setInterval(() => {
+        egfrStabilityText.textContent += egfrSentence[i];
+        i += 1;
+        if (i >= egfrSentence.length) clearInterval(typer);
+      }, 45);
     });
 
     const whyReductionBtn = document.getElementById('whyReductionBtn');
