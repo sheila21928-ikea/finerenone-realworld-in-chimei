@@ -469,6 +469,92 @@
     }
     .baseline-panel { display: none; }
     .baseline-panel.active { display: block; }
+    .baseline-stage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .stage-card {
+      background: linear-gradient(155deg, #0d182f, #081024);
+      border: 1px solid #27406b;
+      border-radius: 18px;
+      padding: 18px 20px 16px;
+      box-shadow: inset 0 0 0 1px rgba(120, 158, 214, .15);
+    }
+    .stage-card h4 {
+      margin: 0 0 2px;
+      font-family: "Noto Serif TC", serif;
+      font-size: 1.85rem;
+      color: var(--teal);
+    }
+    .stage-card.advanced h4 { color: var(--rose); }
+    .stage-card p {
+      margin: 0 0 8px;
+      color: #8da4c9;
+      font-size: 1.45rem;
+      letter-spacing: .08em;
+    }
+    .stage-metric {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(59, 84, 125, .35);
+      color: #d8e7ff;
+      font-size: 1.05rem;
+    }
+    .stage-metric:last-child { border-bottom: none; }
+    .baseline-group-title {
+      margin: 10px 0 14px;
+      letter-spacing: .45em;
+      text-transform: uppercase;
+      font-size: .95rem;
+      color: var(--gold);
+    }
+    .progress-list {
+      display: grid;
+      gap: 10px;
+    }
+    .progress-row {
+      display: grid;
+      grid-template-columns: 210px 1fr 76px;
+      align-items: center;
+      gap: 10px;
+      color: #dbe8ff;
+    }
+    .progress-track {
+      height: 40px;
+      background: rgba(24, 33, 58, .85);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(42, 65, 105, .35);
+    }
+    .progress-fill {
+      --target: 0;
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #58aec0, #3c7f95);
+      border-radius: 10px;
+      transition: width 1.1s ease-out;
+    }
+    .progress-fill.warm { background: linear-gradient(90deg, #d8b67b, #8f7851); }
+    .progress-fill.rose { background: linear-gradient(90deg, #c38880, #76515a); }
+    .progress-value {
+      font-size: 2rem;
+      font-family: "Noto Serif TC", serif;
+      color: #eef5ff;
+      text-align: right;
+    }
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .scroll-reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     /* === NEW: p-value annotation === */
     .p-annotation {
@@ -532,6 +618,47 @@
       font-size: .93rem;
       line-height: 1.6;
     }
+    .hyper-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .hyper-card {
+      border: 1px solid #26406a;
+      border-radius: 20px;
+      padding: 18px 14px;
+      text-align: center;
+      background: linear-gradient(155deg, #0f1a33, #091226);
+    }
+    .hk-ring {
+      --angle: 0deg;
+      --ring-color: #e7a7a4;
+      width: 164px;
+      height: 164px;
+      border-radius: 50%;
+      margin: 0 auto 14px;
+      position: relative;
+      background: conic-gradient(var(--ring-color) 0deg, var(--ring-color) var(--angle), #1c2740 var(--angle), #1c2740 360deg);
+      transition: background 1.1s ease-out;
+    }
+    .hk-ring::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: 50%;
+      background: #0d182f;
+      border: 1px solid #223a62;
+    }
+    .hk-center {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-content: center;
+      z-index: 1;
+      font-family: "Noto Serif TC", serif;
+      font-size: 2rem;
+    }
 
     @media (max-width: 880px) {
       .side-rail { display: none; }
@@ -541,6 +668,8 @@
       .flow-exclude { position: static; transform: none; margin-top: 8px; }
       .flow-exclude::before { display: none; }
       .flow-box { max-width: 100%; }
+      .progress-row { grid-template-columns: 1fr; gap: 6px; }
+      .progress-value { text-align: left; }
     }
   </style>
 </head>
@@ -636,84 +765,64 @@
         <div class="chart-wrap"><canvas id="ckdChart"></canvas></div>
       </div>
 
-      <div class="panel" style="overflow-x:auto;">
-        <div class="baseline-controls" role="tablist" aria-label="Baseline categories">
-          <button class="baseline-btn active" data-baseline="demographics">Demographics</button>
-          <button class="baseline-btn" data-baseline="clinical">Clinical Characteristics</button>
-          <button class="baseline-btn" data-baseline="history">Medical History</button>
-          <button class="baseline-btn" data-baseline="meds">Concomitant Medications</button>
-          <button class="baseline-btn" data-baseline="finerenone">Finerenone Details</button>
-          <button class="baseline-btn" data-baseline="source">Patient Source</button>
-          <button class="baseline-btn" data-baseline="lab">Laboratory Data</button>
+      <div class="panel scroll-reveal" style="overflow-x:auto;">
+        <div class="baseline-stage-grid">
+          <article class="stage-card">
+            <h4>Early CKD (Stage 1-3a)</h4>
+            <p>n = 60</p>
+            <div class="stage-metric"><span>Age</span><span>62.6 ± 10.8 yr</span></div>
+            <div class="stage-metric"><span>eGFR</span><span>69.6 ± 22.4</span></div>
+            <div class="stage-metric"><span>DM</span><span>85.0%</span></div>
+          </article>
+          <article class="stage-card advanced">
+            <h4>Advanced CKD (Stage 3b-5)</h4>
+            <p>n = 106</p>
+            <div class="stage-metric"><span>Age</span><span>68.6 ± 11.0 yr</span></div>
+            <div class="stage-metric"><span>eGFR</span><span>28.7 ± 9.0</span></div>
+            <div class="stage-metric"><span>DM</span><span>84.0%</span></div>
+          </article>
         </div>
-        <table class="baseline-table baseline-panel active" id="baseline-demographics">
-          <tbody>
-            <tr><td>Men, n (%)</td><td>128 (77.1%)</td></tr>
-            <tr><td>Age, years</td><td>66.5 ± 11.3</td></tr>
-          </tbody>
-        </table>
-        <table class="baseline-table baseline-panel" id="baseline-clinical">
-          <tbody>
-            <tr><td>BMI, kg/m²</td><td>26.5 ± 3.7</td></tr>
-            <tr><td>Office SBP, mmHg</td><td>136.9 ± 23.1</td></tr>
-            <tr><td>Office DBP, mmHg</td><td>79.3 ± 9.9</td></tr>
-            <tr><td>LVEF, %</td><td>70.7 ± 11.8</td></tr>
-          </tbody>
-        </table>
-        <table class="baseline-table baseline-panel" id="baseline-history">
-          <tbody>
-            <tr><td>Hypertension</td><td>102 (61.4%)</td></tr>
-            <tr><td>Diabetes mellitus</td><td>140 (84.3%)</td></tr>
-            <tr><td>Dyslipidemia</td><td>118 (71.1%)</td></tr>
-            <tr><td>Coronary artery disease</td><td>30 (18.1%)</td></tr>
-            <tr><td>Cerebrovascular disease</td><td>29 (17.5%)</td></tr>
-            <tr><td>Heart failure</td><td>31 (18.7%)</td></tr>
-          </tbody>
-        </table>
-        <table class="baseline-table baseline-panel" id="baseline-meds">
-          <tbody>
-            <tr><td>RAAS blockers</td><td>143 (86.1%)</td></tr>
-            <tr><td>SGLT2 inhibitors</td><td>121 (72.9%)</td></tr>
-            <tr><td>GLP-1 analogs</td><td>25 (15.1%)</td></tr>
-            <tr><td>Metformin</td><td>99 (59.6%)</td></tr>
-            <tr><td>DPP-4 inhibitors</td><td>89 (53.6%)</td></tr>
-            <tr><td>Insulin</td><td>47 (28.3%)</td></tr>
-            <tr><td>Sulfonylurea</td><td>75 (45.2%)</td></tr>
-            <tr><td>Thiazolidinedione</td><td>39 (23.5%)</td></tr>
-            <tr><td>Glinide</td><td>21 (12.7%)</td></tr>
-            <tr><td>Lipid-lowering agents</td><td>141 (84.9%)</td></tr>
-            <tr><td>Antiplatelet</td><td>92 (55.4%)</td></tr>
-          </tbody>
-        </table>
-        <table class="baseline-table baseline-panel" id="baseline-finerenone">
-          <tbody>
-            <tr><td>Initiation 10 mg/day</td><td>125 (74.9%)</td></tr>
-            <tr><td>Initiation 20 mg/day</td><td>32 (19.2%)</td></tr>
-            <tr><td>Prescription from Nephrology OPD</td><td>75 (45.2%)</td></tr>
-            <tr><td>Prescription from Cardiology OPD</td><td>48 (28.9%)</td></tr>
-            <tr><td>Prescription from Endocrinology OPD</td><td>41 (24.7%)</td></tr>
-          </tbody>
-        </table>
-        <table class="baseline-table baseline-panel" id="baseline-source">
-          <tbody>
-            <tr><td>Medical center</td><td>123 (74.1%)</td></tr>
-            <tr><td>Regional hospital</td><td>35 (21.1%)</td></tr>
-            <tr><td>District hospital</td><td>8 (4.8%)</td></tr>
-          </tbody>
-        </table>
-        <table class="baseline-table baseline-panel" id="baseline-lab">
-          <tbody>
-            <tr><td>Serum creatinine, mg/dL</td><td>1.9 ± 1.0</td></tr>
-            <tr><td>eGFR, mL/min/1.73m²</td><td>43.5 ± 24.9</td></tr>
-            <tr><td>UACR, mg/g (median, IQR)</td><td>610.5 (133.5–1762.5)</td></tr>
-            <tr><td>HbA1c, %</td><td>6.8 ± 1.7</td></tr>
-            <tr><td>Serum albumin, g/dL</td><td>3.9 ± 0.5</td></tr>
-            <tr><td>Serum potassium, mmol/L</td><td>4.2 ± 0.5</td></tr>
-            <tr><td>Serum sodium, mmol/L</td><td>138.9 ± 4.0</td></tr>
-            <tr><td>Serum calcium, mg/dL</td><td>9.0 ± 0.6</td></tr>
-            <tr><td>Serum phosphate, mg/dL</td><td>3.7 ± 0.7</td></tr>
-          </tbody>
-        </table>
+        <div class="baseline-controls" role="tablist" aria-label="Baseline categories">
+          <button class="baseline-btn active" data-baseline="department">Prescribing Departments</button>
+          <button class="baseline-btn" data-baseline="meds">Concomitant Medications</button>
+          <button class="baseline-btn" data-baseline="history">Comorbidities</button>
+          <button class="baseline-btn" data-baseline="source">Hospital Source</button>
+        </div>
+        <div class="baseline-panel active scroll-reveal" id="baseline-department">
+          <h4 class="baseline-group-title">Prescribing Departments</h4>
+          <div class="progress-list">
+            <div class="progress-row"><span>Nephrology</span><div class="progress-track"><div class="progress-fill" data-value="45.2"></div></div><strong class="progress-value count-up" data-target="45.2">0.0%</strong></div>
+            <div class="progress-row"><span>Cardiology</span><div class="progress-track"><div class="progress-fill rose" data-value="28.9"></div></div><strong class="progress-value count-up" data-target="28.9">0.0%</strong></div>
+            <div class="progress-row"><span>Endocrinology</span><div class="progress-track"><div class="progress-fill warm" data-value="24.7"></div></div><strong class="progress-value count-up" data-target="24.7">0.0%</strong></div>
+          </div>
+        </div>
+        <div class="baseline-panel scroll-reveal" id="baseline-meds">
+          <h4 class="baseline-group-title" style="color:var(--teal);">Key Concomitant Medications</h4>
+          <div class="progress-list">
+            <div class="progress-row"><span>RAAS Blockers</span><div class="progress-track"><div class="progress-fill" data-value="86.1"></div></div><strong class="progress-value count-up" data-target="86.1">0.0%</strong></div>
+            <div class="progress-row"><span>SGLT2 Inhibitors</span><div class="progress-track"><div class="progress-fill" data-value="72.9"></div></div><strong class="progress-value count-up" data-target="72.9">0.0%</strong></div>
+            <div class="progress-row"><span>Metformin</span><div class="progress-track"><div class="progress-fill" data-value="59.6"></div></div><strong class="progress-value count-up" data-target="59.6">0.0%</strong></div>
+            <div class="progress-row"><span>Lipid-lowering</span><div class="progress-track"><div class="progress-fill" data-value="84.9"></div></div><strong class="progress-value count-up" data-target="84.9">0.0%</strong></div>
+            <div class="progress-row"><span>GLP-1 RA</span><div class="progress-track"><div class="progress-fill" data-value="15.1"></div></div><strong class="progress-value count-up" data-target="15.1">0.0%</strong></div>
+          </div>
+        </div>
+        <div class="baseline-panel scroll-reveal" id="baseline-history">
+          <h4 class="baseline-group-title">Comorbidity Profile</h4>
+          <div class="progress-list">
+            <div class="progress-row"><span>Diabetes Mellitus</span><div class="progress-track"><div class="progress-fill" data-value="84.3"></div></div><strong class="progress-value count-up" data-target="84.3">0.0%</strong></div>
+            <div class="progress-row"><span>Dyslipidemia</span><div class="progress-track"><div class="progress-fill" data-value="71.1"></div></div><strong class="progress-value count-up" data-target="71.1">0.0%</strong></div>
+            <div class="progress-row"><span>Hypertension</span><div class="progress-track"><div class="progress-fill" data-value="61.4"></div></div><strong class="progress-value count-up" data-target="61.4">0.0%</strong></div>
+            <div class="progress-row"><span>Heart Failure</span><div class="progress-track"><div class="progress-fill rose" data-value="18.7"></div></div><strong class="progress-value count-up" data-target="18.7">0.0%</strong></div>
+          </div>
+        </div>
+        <div class="baseline-panel scroll-reveal" id="baseline-source">
+          <h4 class="baseline-group-title">Patient Source</h4>
+          <div class="progress-list">
+            <div class="progress-row"><span>Medical Center</span><div class="progress-track"><div class="progress-fill" data-value="74.1"></div></div><strong class="progress-value count-up" data-target="74.1">0.0%</strong></div>
+            <div class="progress-row"><span>Regional Hospital</span><div class="progress-track"><div class="progress-fill warm" data-value="21.1"></div></div><strong class="progress-value count-up" data-target="21.1">0.0%</strong></div>
+            <div class="progress-row"><span>District Hospital</span><div class="progress-track"><div class="progress-fill rose" data-value="4.8"></div></div><strong class="progress-value count-up" data-target="4.8">0.0%</strong></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -847,6 +956,30 @@
         </article>
         <article class="mini-card">
           <h4>AKI</h4><p>1.2%（2/166）</p>
+        </article>
+      </div>
+
+      <div class="hyper-grid scroll-reveal">
+        <article class="hyper-card">
+          <div class="hk-ring" data-percent="19.3" style="--ring-color:#e4b1af;">
+            <div class="hk-center count-up" data-target="19.3">0.0%</div>
+          </div>
+          <h4>Any Hyperkalemia</h4>
+          <p>K &gt; 5.0 mEq/L · 32/166</p>
+        </article>
+        <article class="hyper-card">
+          <div class="hk-ring" data-percent="18.7" style="--ring-color:#e3c784;">
+            <div class="hk-center count-up" data-target="18.7">0.0%</div>
+          </div>
+          <h4 style="color:var(--gold);">Mild</h4>
+          <p>K 5.0 - 6.0 · 31/166</p>
+        </article>
+        <article class="hyper-card">
+          <div class="hk-ring" data-percent="1.8" style="--ring-color:#de717a;">
+            <div class="hk-center count-up" data-target="1.8">0.0%</div>
+          </div>
+          <h4 style="color:var(--rose);">Severe</h4>
+          <p>K &gt; 6.0 · 3/166</p>
         </article>
       </div>
 
@@ -1295,9 +1428,60 @@
         document.querySelectorAll('.baseline-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.baseline-panel').forEach(panel => panel.classList.remove('active'));
         btn.classList.add('active');
-        document.getElementById(`baseline-${btn.dataset.baseline}`).classList.add('active');
+        const panel = document.getElementById(`baseline-${btn.dataset.baseline}`);
+        panel.classList.add('active');
+        resetAndAnimatePanel(panel);
       });
     });
+
+    /* ====== Scroll-triggered animations ====== */
+    const animatedNodes = new WeakSet();
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting || animatedNodes.has(entry.target)) return;
+        entry.target.classList.add('visible');
+        animateBlock(entry.target);
+        animatedNodes.add(entry.target);
+      });
+    }, { threshold: 0.25 });
+
+    document.querySelectorAll('.scroll-reveal').forEach(el => revealObserver.observe(el));
+
+    function animateCount(el) {
+      const target = parseFloat(el.dataset.target || '0');
+      const duration = 900;
+      const start = performance.now();
+      function tick(now) {
+        const p = Math.min((now - start) / duration, 1);
+        el.textContent = `${(target * p).toFixed(1)}%`;
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function animateProgress(el) {
+      el.style.width = `${el.dataset.value}%`;
+    }
+
+    function animateRing(el) {
+      const percent = parseFloat(el.dataset.percent || '0');
+      const angle = Math.max(0, Math.min(360, percent * 3.6));
+      el.style.setProperty('--angle', `${angle}deg`);
+    }
+
+    function animateBlock(root) {
+      root.querySelectorAll('.count-up').forEach(animateCount);
+      root.querySelectorAll('.progress-fill').forEach(animateProgress);
+      root.querySelectorAll('.hk-ring').forEach(animateRing);
+    }
+
+    function resetAndAnimatePanel(panel) {
+      panel.querySelectorAll('.progress-fill').forEach(fill => fill.style.width = '0');
+      panel.querySelectorAll('.count-up').forEach(counter => counter.textContent = '0.0%');
+      animateBlock(panel);
+    }
+
+    resetAndAnimatePanel(document.getElementById('baseline-department'));
   </script>
 </body>
 </html>
