@@ -46,24 +46,25 @@
 
     .side-rail {
       position: fixed;
-      left: 18px;
+      left: 10px;
       top: 50%;
       transform: translateY(-50%);
       z-index: 10;
       display: grid;
-      gap: 10px;
+      gap: 8px;
     }
 
     .side-item {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       background: rgba(8, 18, 37, 0.7);
       border: 1px solid #2b436f;
       border-radius: 999px;
-      padding: 6px 10px 6px 8px;
+      padding: 5px 9px 5px 7px;
       cursor: pointer;
       transition: border-color .25s, background .25s;
+      max-width: 168px;
     }
     .side-item:hover,
     .side-item.active {
@@ -71,10 +72,12 @@
       background: rgba(18, 39, 73, 0.9);
     }
     .side-label {
-      font-size: .75rem;
+      font-size: .68rem;
       color: #b8ccea;
       letter-spacing: .04em;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .side-dot {
@@ -447,27 +450,35 @@
       padding-top: 16px;
       border-bottom: 1px solid var(--line);
     }
-    .baseline-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 16px;
+    .baseline-accordion {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .baseline-item {
+      border: 1px solid #23406f;
+      border-radius: 12px;
+      background: rgba(9, 18, 37, .7);
+      padding: 10px;
     }
     .baseline-btn {
+      width: 100%;
       background: #12264a;
       color: #d9e8ff;
       border: 1px solid #2f4f86;
-      border-radius: 999px;
-      padding: 8px 15px;
+      border-radius: 10px;
+      padding: 10px 12px;
       font-weight: 600;
       cursor: pointer;
+      text-align: left;
     }
     .baseline-btn.active {
       background: var(--gold);
       color: #1a2232;
       border-color: var(--gold);
     }
-    .baseline-panel { display: none; }
+    .baseline-panel { display: none; margin-top: 10px; }
     .baseline-panel.active { display: block; }
     .baseline-stage-grid {
       display: grid;
@@ -541,11 +552,55 @@
     .progress-fill.warm { background: linear-gradient(90deg, #d8b67b, #8f7851); }
     .progress-fill.rose { background: linear-gradient(90deg, #c38880, #76515a); }
     .progress-value {
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-family: "Noto Serif TC", serif;
       color: #eef5ff;
       text-align: right;
     }
+    .glow-card {
+      box-shadow: 0 0 0 rgba(99, 214, 230, 0);
+      animation: ratioGlow 1.6s ease-in-out infinite;
+    }
+    @keyframes ratioGlow {
+      0%, 100% { box-shadow: 0 0 8px rgba(99,214,230,.2); }
+      50% { box-shadow: 0 0 20px rgba(99,214,230,.55); }
+    }
+    .blink-text {
+      animation: blinkGlow 1s ease-in-out infinite;
+      color: #fff2c6;
+      font-weight: 700;
+    }
+    @keyframes blinkGlow {
+      0%, 100% { opacity: .5; text-shadow: 0 0 3px #e3c784; }
+      50% { opacity: 1; text-shadow: 0 0 12px #e3c784; }
+    }
+    .section-toggle-btn {
+      background: rgba(99, 214, 230, .12);
+      border: 1px solid var(--teal);
+      color: #dff6ff;
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 8px 0 12px;
+    }
+    .typing-glow {
+      min-height: 28px;
+      color: #c6f9ff;
+      text-shadow: 0 0 10px rgba(99, 214, 230, .75);
+      letter-spacing: .04em;
+    }
+    .hidden { display: none; }
+    .explain-box {
+      margin-top: 14px;
+      border: 1px solid #35558b;
+      border-radius: 12px;
+      background: rgba(8, 20, 42, .72);
+      padding: 14px 16px;
+      color: #d7e8ff;
+    }
+    .explain-box ul { margin: 8px 0 0 20px; }
+    .explain-box li { margin: 6px 0; }
     .scroll-reveal {
       opacity: 0;
       transform: translateY(16px);
@@ -660,8 +715,10 @@
       font-size: 2rem;
     }
 
-    @media (max-width: 880px) {
+    @media (max-width: 1200px) {
       .side-rail { display: none; }
+    }
+    @media (max-width: 880px) {
       body { font-size: 16px; }
       .chart-wrap { height: 270px; }
       .flow-arrow-note { position: static; transform: none; margin: 8px 0; white-space: normal; }
@@ -670,20 +727,21 @@
       .flow-box { max-width: 100%; }
       .progress-row { grid-template-columns: 1fr; gap: 6px; }
       .progress-value { text-align: left; }
+      .baseline-accordion { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body class="stars">
   <nav class="side-rail" aria-label="Chapter navigation">
     <button class="side-item active" data-target="hero" aria-label="Cover"><span class="side-dot"></span><span class="side-label">Cover</span></button>
-    <button class="side-item" data-target="chapter1" aria-label="Study Design"><span class="side-dot"></span><span class="side-label">Chapter I</span></button>
-    <button class="side-item" data-target="chapter1b" aria-label="Baseline"><span class="side-dot"></span><span class="side-label">Chapter I-B</span></button>
-    <button class="side-item" data-target="chapter2" aria-label="Key Results"><span class="side-dot"></span><span class="side-label">Chapter II</span></button>
-    <button class="side-item" data-target="chapter3" aria-label="Safety"><span class="side-dot"></span><span class="side-label">Chapter III</span></button>
-    <button class="side-item" data-target="chapter4" aria-label="Subgroups"><span class="side-dot"></span><span class="side-label">Chapter IV</span></button>
-    <button class="side-item" data-target="chapter5" aria-label="Trial Comparison"><span class="side-dot"></span><span class="side-label">Chapter V</span></button>
-    <button class="side-item" data-target="chapter5b" aria-label="Discussion"><span class="side-dot"></span><span class="side-label">Chapter V-B</span></button>
-    <button class="side-item" data-target="chapter6" aria-label="Strengths and Limitations"><span class="side-dot"></span><span class="side-label">Chapter VI</span></button>
+    <button class="side-item" data-target="chapter1" aria-label="Patient Selection & Study Design"><span class="side-dot"></span><span class="side-label">Patient Selection & Study Design</span></button>
+    <button class="side-item" data-target="chapter1b" aria-label="Baseline Characteristics"><span class="side-dot"></span><span class="side-label">Baseline Characteristics</span></button>
+    <button class="side-item" data-target="chapter2" aria-label="Renal Outcomes & Trend Charts"><span class="side-dot"></span><span class="side-label">Renal Outcomes & Trend Charts</span></button>
+    <button class="side-item" data-target="chapter3" aria-label="Clinical Events & Safety"><span class="side-dot"></span><span class="side-label">Clinical Events & Safety</span></button>
+    <button class="side-item" data-target="chapter4" aria-label="Subgroup Analysis"><span class="side-dot"></span><span class="side-label">Subgroup Analysis</span></button>
+    <button class="side-item" data-target="chapter5" aria-label="Comparison with Pivotal Trials"><span class="side-dot"></span><span class="side-label">Comparison with Pivotal Trials</span></button>
+    <button class="side-item" data-target="chapter5b" aria-label="Discussion Insights"><span class="side-dot"></span><span class="side-label">Discussion Insights</span></button>
+    <button class="side-item" data-target="chapter6" aria-label="Strengths & Limitations"><span class="side-dot"></span><span class="side-label">Strengths & Limitations</span></button>
   </nav>
 
   <header id="hero" class="container">
@@ -782,45 +840,49 @@
             <div class="stage-metric"><span>DM</span><span>84.0%</span></div>
           </article>
         </div>
-        <div class="baseline-controls" role="tablist" aria-label="Baseline categories">
-          <button class="baseline-btn active" data-baseline="department">Prescribing Departments</button>
-          <button class="baseline-btn" data-baseline="meds">Concomitant Medications</button>
-          <button class="baseline-btn" data-baseline="history">Comorbidities</button>
-          <button class="baseline-btn" data-baseline="source">Hospital Source</button>
-        </div>
-        <div class="baseline-panel active scroll-reveal" id="baseline-department">
-          <h4 class="baseline-group-title">Prescribing Departments</h4>
-          <div class="progress-list">
-            <div class="progress-row"><span>Nephrology</span><div class="progress-track"><div class="progress-fill" data-value="45.2"></div></div><strong class="progress-value count-up" data-target="45.2">0.0%</strong></div>
-            <div class="progress-row"><span>Cardiology</span><div class="progress-track"><div class="progress-fill rose" data-value="28.9"></div></div><strong class="progress-value count-up" data-target="28.9">0.0%</strong></div>
-            <div class="progress-row"><span>Endocrinology</span><div class="progress-track"><div class="progress-fill warm" data-value="24.7"></div></div><strong class="progress-value count-up" data-target="24.7">0.0%</strong></div>
+        <div class="baseline-accordion" role="tablist" aria-label="Baseline categories">
+          <div class="baseline-item">
+            <button class="baseline-btn active" data-baseline="department">Prescribing Departments</button>
+            <div class="baseline-panel active scroll-reveal" id="baseline-department">
+              <div class="progress-list">
+                <div class="progress-row"><span>Nephrology</span><div class="progress-track"><div class="progress-fill" data-value="45.2"></div></div><strong class="progress-value count-up" data-target="45.2">0.0%</strong></div>
+                <div class="progress-row"><span>Cardiology</span><div class="progress-track"><div class="progress-fill rose" data-value="28.9"></div></div><strong class="progress-value count-up" data-target="28.9">0.0%</strong></div>
+                <div class="progress-row"><span>Endocrinology</span><div class="progress-track"><div class="progress-fill warm" data-value="24.7"></div></div><strong class="progress-value count-up" data-target="24.7">0.0%</strong></div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="baseline-panel scroll-reveal" id="baseline-meds">
-          <h4 class="baseline-group-title" style="color:var(--teal);">Key Concomitant Medications</h4>
-          <div class="progress-list">
-            <div class="progress-row"><span>RAAS Blockers</span><div class="progress-track"><div class="progress-fill" data-value="86.1"></div></div><strong class="progress-value count-up" data-target="86.1">0.0%</strong></div>
-            <div class="progress-row"><span>SGLT2 Inhibitors</span><div class="progress-track"><div class="progress-fill" data-value="72.9"></div></div><strong class="progress-value count-up" data-target="72.9">0.0%</strong></div>
-            <div class="progress-row"><span>Metformin</span><div class="progress-track"><div class="progress-fill" data-value="59.6"></div></div><strong class="progress-value count-up" data-target="59.6">0.0%</strong></div>
-            <div class="progress-row"><span>Lipid-lowering</span><div class="progress-track"><div class="progress-fill" data-value="84.9"></div></div><strong class="progress-value count-up" data-target="84.9">0.0%</strong></div>
-            <div class="progress-row"><span>GLP-1 RA</span><div class="progress-track"><div class="progress-fill" data-value="15.1"></div></div><strong class="progress-value count-up" data-target="15.1">0.0%</strong></div>
+          <div class="baseline-item">
+            <button class="baseline-btn" data-baseline="meds">Concomitant Medications</button>
+            <div class="baseline-panel scroll-reveal" id="baseline-meds">
+              <div class="progress-list">
+                <div class="progress-row"><span>RAAS Blockers</span><div class="progress-track"><div class="progress-fill" data-value="86.1"></div></div><strong class="progress-value count-up" data-target="86.1">0.0%</strong></div>
+                <div class="progress-row"><span>SGLT2 Inhibitors</span><div class="progress-track"><div class="progress-fill" data-value="72.9"></div></div><strong class="progress-value count-up" data-target="72.9">0.0%</strong></div>
+                <div class="progress-row"><span>Metformin</span><div class="progress-track"><div class="progress-fill" data-value="59.6"></div></div><strong class="progress-value count-up" data-target="59.6">0.0%</strong></div>
+                <div class="progress-row"><span>Lipid-lowering</span><div class="progress-track"><div class="progress-fill" data-value="84.9"></div></div><strong class="progress-value count-up" data-target="84.9">0.0%</strong></div>
+                <div class="progress-row"><span>GLP-1 RA</span><div class="progress-track"><div class="progress-fill" data-value="15.1"></div></div><strong class="progress-value count-up" data-target="15.1">0.0%</strong></div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="baseline-panel scroll-reveal" id="baseline-history">
-          <h4 class="baseline-group-title">Comorbidity Profile</h4>
-          <div class="progress-list">
-            <div class="progress-row"><span>Diabetes Mellitus</span><div class="progress-track"><div class="progress-fill" data-value="84.3"></div></div><strong class="progress-value count-up" data-target="84.3">0.0%</strong></div>
-            <div class="progress-row"><span>Dyslipidemia</span><div class="progress-track"><div class="progress-fill" data-value="71.1"></div></div><strong class="progress-value count-up" data-target="71.1">0.0%</strong></div>
-            <div class="progress-row"><span>Hypertension</span><div class="progress-track"><div class="progress-fill" data-value="61.4"></div></div><strong class="progress-value count-up" data-target="61.4">0.0%</strong></div>
-            <div class="progress-row"><span>Heart Failure</span><div class="progress-track"><div class="progress-fill rose" data-value="18.7"></div></div><strong class="progress-value count-up" data-target="18.7">0.0%</strong></div>
+          <div class="baseline-item">
+            <button class="baseline-btn" data-baseline="history">Comorbidities</button>
+            <div class="baseline-panel scroll-reveal" id="baseline-history">
+              <div class="progress-list">
+                <div class="progress-row"><span>Diabetes Mellitus</span><div class="progress-track"><div class="progress-fill" data-value="84.3"></div></div><strong class="progress-value count-up" data-target="84.3">0.0%</strong></div>
+                <div class="progress-row"><span>Dyslipidemia</span><div class="progress-track"><div class="progress-fill" data-value="71.1"></div></div><strong class="progress-value count-up" data-target="71.1">0.0%</strong></div>
+                <div class="progress-row"><span>Hypertension</span><div class="progress-track"><div class="progress-fill" data-value="61.4"></div></div><strong class="progress-value count-up" data-target="61.4">0.0%</strong></div>
+                <div class="progress-row"><span>Heart Failure</span><div class="progress-track"><div class="progress-fill rose" data-value="18.7"></div></div><strong class="progress-value count-up" data-target="18.7">0.0%</strong></div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="baseline-panel scroll-reveal" id="baseline-source">
-          <h4 class="baseline-group-title">Patient Source</h4>
-          <div class="progress-list">
-            <div class="progress-row"><span>Medical Center</span><div class="progress-track"><div class="progress-fill" data-value="74.1"></div></div><strong class="progress-value count-up" data-target="74.1">0.0%</strong></div>
-            <div class="progress-row"><span>Regional Hospital</span><div class="progress-track"><div class="progress-fill warm" data-value="21.1"></div></div><strong class="progress-value count-up" data-target="21.1">0.0%</strong></div>
-            <div class="progress-row"><span>District Hospital</span><div class="progress-track"><div class="progress-fill rose" data-value="4.8"></div></div><strong class="progress-value count-up" data-target="4.8">0.0%</strong></div>
+          <div class="baseline-item">
+            <button class="baseline-btn" data-baseline="source">Hospital Source</button>
+            <div class="baseline-panel scroll-reveal" id="baseline-source">
+              <div class="progress-list">
+                <div class="progress-row"><span>Medical Center</span><div class="progress-track"><div class="progress-fill" data-value="74.1"></div></div><strong class="progress-value count-up" data-target="74.1">0.0%</strong></div>
+                <div class="progress-row"><span>Regional Hospital</span><div class="progress-track"><div class="progress-fill warm" data-value="21.1"></div></div><strong class="progress-value count-up" data-target="21.1">0.0%</strong></div>
+                <div class="progress-row"><span>District Hospital</span><div class="progress-track"><div class="progress-fill rose" data-value="4.8"></div></div><strong class="progress-value count-up" data-target="4.8">0.0%</strong></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -835,7 +897,9 @@
       <p class="lead">Primary outcomes: changes in eGFR and UACR at Day 30, 90, and 180 after finerenone initiation. Statistics: Wilcoxon signed-rank test (pairwise) and Friedman test (overall trend).</p>
 
       <div class="panel">
-        <h3>UACR Reduction Trajectory</h3>
+        <h3>UACR Reduction</h3>
+        <button class="section-toggle-btn" id="uacrReductionBtn">UACR REDUCTION</button>
+        <p id="uacrReductionText" class="typing-glow"></p>
         <div class="chart-wrap"><canvas id="uacrChart"></canvas></div>
         <div class="p-annotation">
           <span class="sig">Day 30 vs Baseline: p = 0.015 *</span>
@@ -859,28 +923,28 @@
             <p style="font-size:1.4rem;color:var(--teal);font-weight:700;">5.83</p>
             <p>95% CI: 5.49 – 6.17</p>
           </div>
-          <div class="mini-card">
+          <div class="mini-card glow-card">
             <h4>Mean Ratio (exp[ΔlogUACR])</h4>
             <p style="font-size:1.4rem;color:var(--rose);font-weight:700;">0.78</p>
-            <p>= Average 22% reduction from baseline</p>
+            <p class="blink-text">= Average 22% reduction from baseline</p>
           </div>
         </div>
-      </div>
-
-      <div class="panel">
-        <h3>eGFR Stability Trend</h3>
-        <div class="chart-wrap"><canvas id="egfrChart"></canvas></div>
-        <div class="p-annotation">
-          <span class="ns">Day 30 vs Baseline: p = 0.134</span>
-          <span class="ns">Day 90: p = 0.219</span>
-          <span class="ns">Day 180: p = 0.078</span>
-          <span class="sig">Friedman trend: p = 0.006 (modest)</span>
+        <button class="section-toggle-btn" id="whyReductionBtn">WHY 22% VS 31% UACR REDUCTION?</button>
+        <div id="whyReductionBox" class="explain-box hidden">
+          相較 FIDELIO (31%)/FIGARO (32%)，UACR 降幅較小，可能原因：
+          <ul>
+            <li>(1) 族群異質性較高</li>
+            <li>(2) 本篇全為亞洲族群 (100%)，FIDELIO (25.4%) / FIGARO (19.8%)</li>
+            <li>(3) 併用 SGLT2i 高達 72.9%，FIDELIO (25.4%) / FIGARO (19.8%)，降低可額外觀察到的效益</li>
+            <li>(4) 多數以 10 mg 起始且 titration 較保守，與 RCT 中多數 titrate 到 20 mg 不同</li>
+            <li>(5) Real-world 下的用藥順從性和 follow-up 變異也較大</li>
+          </ul>
         </div>
       </div>
 
       <!-- Table 2: eGFR & UACR summary -->
       <div class="panel" style="overflow-x:auto;">
-        <h3>Table 2 · Changes in eGFR and UACR After Finerenone Use</h3>
+        <h3>Changes in eGFR and UACR After Finerenone Use</h3>
         <table class="compare-table" style="min-width:700px;">
           <thead>
             <tr>
@@ -894,14 +958,6 @@
           </thead>
           <tbody>
             <tr>
-              <td style="text-align:left;">eGFR (mean ± SD)</td>
-              <td>43.5 ± 24.9</td>
-              <td>43.1 ± 25.1</td>
-              <td>43.1 ± 24.9</td>
-              <td>43.3 ± 24.8</td>
-              <td class="highlight">0.006</td>
-            </tr>
-            <tr>
               <td style="text-align:left;">UACR (median, IQR)</td>
               <td>610.5<br><small style="color:var(--muted);">(133.5–1762.5)</small></td>
               <td>531.9<br><small style="color:var(--muted);">(103.1–1758.4)</small></td>
@@ -909,9 +965,29 @@
               <td>332.1<br><small style="color:var(--muted);">(102.1–1656.1)</small></td>
               <td class="highlight">0.002</td>
             </tr>
+            <tr>
+              <td style="text-align:left;">eGFR (mean ± SD)</td>
+              <td>43.5 ± 24.9</td>
+              <td>43.1 ± 25.1</td>
+              <td>43.1 ± 24.9</td>
+              <td>43.3 ± 24.8</td>
+              <td class="highlight">0.006</td>
+            </tr>
           </tbody>
         </table>
       </div>
+
+      <div class="panel">
+        <h3>eGFR Stability Trend</h3>
+        <div class="chart-wrap"><canvas id="egfrChart"></canvas></div>
+        <div class="p-annotation">
+          <span class="ns">Day 30 vs Baseline: p = 0.134</span>
+          <span class="ns">Day 90: p = 0.219</span>
+          <span class="ns">Day 180: p = 0.078</span>
+          <span class="sig">Friedman trend: p = 0.006 (modest)</span>
+        </div>
+      </div>
+
     </section>
 
     <!-- ==================== CHAPTER III: Safety ==================== -->
@@ -1432,6 +1508,27 @@
         panel.classList.add('active');
         resetAndAnimatePanel(panel);
       });
+    });
+
+    /* ====== Chapter II toggles ====== */
+    const uacrReductionBtn = document.getElementById('uacrReductionBtn');
+    const uacrReductionText = document.getElementById('uacrReductionText');
+    const uacrSentence = 'progressive 且 statistically significant 的降蛋白尿效果';
+
+    uacrReductionBtn?.addEventListener('click', () => {
+      uacrReductionText.textContent = '';
+      let i = 0;
+      const typer = setInterval(() => {
+        uacrReductionText.textContent += uacrSentence[i];
+        i += 1;
+        if (i >= uacrSentence.length) clearInterval(typer);
+      }, 70);
+    });
+
+    const whyReductionBtn = document.getElementById('whyReductionBtn');
+    const whyReductionBox = document.getElementById('whyReductionBox');
+    whyReductionBtn?.addEventListener('click', () => {
+      whyReductionBox.classList.toggle('hidden');
     });
 
     /* ====== Scroll-triggered animations ====== */
