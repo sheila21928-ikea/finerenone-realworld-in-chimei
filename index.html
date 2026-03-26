@@ -750,8 +750,7 @@
 </head>
 <body class="stars">
   <nav class="side-rail" aria-label="Chapter navigation">
-    <button class="side-item active" data-target="hero" aria-label="Cover"><span class="side-dot"></span><span class="side-label">Cover</span></button>
-    <button class="side-item" data-target="chapter1" aria-label="Patient Selection & Study Design"><span class="side-dot"></span><span class="side-label">Patient Selection & Study Design</span></button>
+    <button class="side-item active" data-target="chapter1" aria-label="Patient Selection & Study Design"><span class="side-dot"></span><span class="side-label">Patient Selection & Study Design</span></button>
     <button class="side-item" data-target="chapter1b" aria-label="Baseline Characteristics"><span class="side-dot"></span><span class="side-label">Baseline Characteristics</span></button>
     <button class="side-item" data-target="chapter2" aria-label="Renal Outcomes & Trend Charts"><span class="side-dot"></span><span class="side-label">Renal Outcomes & Trend Charts</span></button>
     <button class="side-item" data-target="chapter3" aria-label="Clinical Events & Safety"><span class="side-dot"></span><span class="side-label">Clinical Events & Safety</span></button>
@@ -766,6 +765,7 @@
       <div class="label">Classified Clinical Investigation // Chi Mei Medical Center</div>
       <h1>Finerenone<br>Real-World Experience in Chimei</h1>
       <p class="hero-sub">Chi-Ya, Huang &amp; I-Ning, Yang</p>
+      <p class="hero-sub">Mentor C.T. Liao</p>
       <p class="hero-sub">166 patients, 3 hospital sites, and real-world evidence.<br>An interactive dashboard to interpret Finerenone clinical efficacy and safety.</p>
       <div class="heartbeat" aria-hidden="true"></div>
     </div>
@@ -1578,11 +1578,13 @@ real-world 情境下的 dietary potassium 攝取不一`;
 
     function animateCount(el) {
       const target = parseFloat(el.dataset.target || '0');
-      const duration = 900;
+      const decimals = parseInt(el.dataset.decimals || '1', 10);
+      const suffix = el.dataset.suffix || '%';
+      const duration = parseInt(el.dataset.duration || '900', 10);
       const start = performance.now();
       function tick(now) {
         const p = Math.min((now - start) / duration, 1);
-        el.textContent = `${(target * p).toFixed(1)}%`;
+        el.textContent = `${(target * p).toFixed(decimals)}${suffix}`;
         if (p < 1) requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
@@ -1603,7 +1605,12 @@ real-world 情境下的 dietary potassium 攝取不一`;
     }
 
     function animateProgress(el) {
-      el.style.width = `${el.dataset.value}%`;
+      el.style.width = '0';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          el.style.width = `${el.dataset.value}%`;
+        });
+      });
     }
 
     function animateRing(el) {
@@ -1625,7 +1632,24 @@ real-world 情境下的 dietary potassium 攝取不一`;
     }
 
     resetAndAnimatePanel(document.getElementById('baseline-department'));
-    document.querySelectorAll('.kpi-count').forEach(animateKpi);
+
+    const kpiGrid = document.querySelector('#chapter1b .kpi-grid');
+    const kpiObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.querySelectorAll('.kpi-count').forEach(animateKpi);
+        kpiObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.35 });
+
+    if (kpiGrid) {
+      kpiGrid.querySelectorAll('.kpi-count').forEach(el => {
+        const decimals = parseInt(el.dataset.decimals || '0', 10);
+        const suffix = el.dataset.suffix || '';
+        el.textContent = `${(0).toFixed(decimals)}${suffix}`;
+      });
+      kpiObserver.observe(kpiGrid);
+    }
 
     document.querySelectorAll('.insight-toggle').forEach(btn => {
       btn.addEventListener('click', () => {
