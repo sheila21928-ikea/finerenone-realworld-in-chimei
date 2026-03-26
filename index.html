@@ -817,6 +817,10 @@
       font-size: 1rem;
       font-weight: 700;
     }
+    .trial-btn[aria-expanded="true"] {
+      background: rgba(227, 199, 132, .32);
+      box-shadow: 0 0 0 2px rgba(227, 199, 132, .3);
+    }
     .status-green { color: #91d39b; font-weight: 700; }
     .status-orange { color: #f0ae68; font-weight: 700; }
     .status-gray { color: #b9b0a2; font-weight: 700; }
@@ -854,6 +858,51 @@
     }
     .finearts-detail ul { margin: 0; padding-left: 22px; }
     .finearts-detail li { margin: 6px 0; }
+    .trial-detail {
+      margin-top: 16px;
+      display: none;
+      border-left: 4px solid #9cc07f;
+      background: rgba(156, 192, 127, .12);
+      border-radius: 0 12px 12px 0;
+      padding: 16px 20px;
+      color: #f4f8eb;
+    }
+    .trial-detail.find-ckd {
+      border-left-color: #7bc0c8;
+      background: rgba(123, 192, 200, .12);
+      color: #eaf8fa;
+    }
+    .trial-detail.visible { display: block; }
+    .trial-detail-topline {
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin: 10px 0 14px;
+      font-weight: 700;
+      text-align: center;
+      color: #f4fff2;
+      background: #6d8453;
+    }
+    .trial-detail.find-ckd .trial-detail-topline {
+      background: #4e7f85;
+      color: #f1feff;
+    }
+    .trial-detail-metric {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .trial-detail-metric strong {
+      font-size: 2.7rem;
+      line-height: 1.05;
+      color: #f0ae68;
+      font-family: "Noto Serif TC", serif;
+      text-align: center;
+    }
+    .trial-detail.find-ckd .trial-detail-metric strong { color: #8be6f0; }
+    .trial-detail ul { margin: 0; padding-left: 22px; }
+    .trial-detail li { margin: 6px 0; }
     .potassium-image {
       display: none;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -1568,14 +1617,18 @@
                 <td>WHF + CV death ↓16%</td>
               </tr>
               <tr>
-                <td class="trial-name">FINE-ONE</td>
+                <td class="trial-name">
+                  <button id="fineOneToggleBtn" class="trial-btn" type="button" aria-expanded="false">FINE-ONE</button>
+                </td>
                 <td>T1D + CKD</td>
                 <td>242</td>
                 <td class="status-orange">Positive results</td>
                 <td>UACR ↓25%</td>
               </tr>
               <tr>
-                <td class="trial-name">FIND-CKD</td>
+                <td class="trial-name">
+                  <button id="findCkdToggleBtn" class="trial-btn" type="button" aria-expanded="false">FIND-CKD</button>
+                </td>
                 <td>Non-diabetic CKD (incl. IgAN)</td>
                 <td>1,584</td>
                 <td class="status-orange">Primary EP met</td>
@@ -1624,6 +1677,44 @@
             <li>Consistent regardless of SGLT2i use at baseline</li>
             <li>Effective in severe HF (ESC-HFA definition)</li>
             <li style="color:#f0ae68;font-weight:700;">FDA approved for HF with LVEF ≥40% in July 2025</li>
+          </ul>
+        </article>
+
+        <article id="fineOneDetail" class="trial-detail" aria-live="polite">
+          <h3 style="margin:0 0 6px;">① FINE-ONE: First Positive Phase III in T1D + CKD</h3>
+          <div class="trial-detail-topline">ASN Kidney Week 2025 ｜ N = 242 ｜ Phase III ｜ NCT05901831</div>
+          <div class="trial-detail-metric">
+            <strong>25%</strong>
+            <div>
+              <div style="font-size:1.45rem;font-weight:700;">UACR reduction vs placebo over 6 months</div>
+              <div style="font-size:1.25rem;font-style:italic;">LS mean ratio 0.75 (0.65-0.87), p=0.0001</div>
+            </div>
+          </div>
+          <ul>
+            <li>First novel therapy showing renal benefit in T1D + CKD in ~30 years.</li>
+            <li>Addresses major unmet need: up to 30% of T1D patients develop CKD.</li>
+            <li>Supports UACR as a potential bridging biomarker for regulatory pathway.</li>
+            <li>Safety profile consistent with prior finerenone program.</li>
+            <li style="color:#f0ae68;font-weight:700;">Potential regulatory submission anticipated.</li>
+          </ul>
+        </article>
+
+        <article id="findCkdDetail" class="trial-detail find-ckd" aria-live="polite">
+          <h3 style="margin:0 0 6px;">◇ FIND-CKD: Non-Diabetic CKD (including IgAN)</h3>
+          <div class="trial-detail-topline">Phase III ｜ N = 1,584 ｜ 32 months ｜ Topline results: March 2026 ｜ NCT05047263</div>
+          <div class="trial-detail-metric">
+            <strong>Primary EP<br>Met</strong>
+            <div>
+              <div style="font-size:1.45rem;font-weight:700;">Significant improvement in eGFR slope</div>
+              <div style="font-size:1.25rem;font-style:italic;">Mean annual rate of change from baseline to month 32</div>
+            </div>
+          </div>
+          <ul>
+            <li>Population: UACR 200-3500 mg/g, eGFR 25-90 mL/min/1.73m² on maximally tolerated RASi.</li>
+            <li>Most common etiology was chronic glomerulonephritis (57%).</li>
+            <li><strong>IgA nephropathy represented 26.3% of the enrolled population.</strong></li>
+            <li>16.9% were on concomitant SGLT2i at baseline.</li>
+            <li style="color:#f0ae68;font-weight:700;">First phase III finerenone trial in non-diabetic CKD.</li>
           </ul>
         </article>
       </div>
@@ -1901,6 +1992,20 @@ real-world 情境下的 dietary potassium 攝取不一`;
     fineartsToggleBtn?.addEventListener('click', () => {
       fineartsDetail.classList.toggle('visible');
       fineartsToggleBtn.setAttribute('aria-expanded', fineartsDetail.classList.contains('visible') ? 'true' : 'false');
+    });
+
+    const fineOneToggleBtn = document.getElementById('fineOneToggleBtn');
+    const fineOneDetail = document.getElementById('fineOneDetail');
+    fineOneToggleBtn?.addEventListener('click', () => {
+      fineOneDetail.classList.toggle('visible');
+      fineOneToggleBtn.setAttribute('aria-expanded', fineOneDetail.classList.contains('visible') ? 'true' : 'false');
+    });
+
+    const findCkdToggleBtn = document.getElementById('findCkdToggleBtn');
+    const findCkdDetail = document.getElementById('findCkdDetail');
+    findCkdToggleBtn?.addEventListener('click', () => {
+      findCkdDetail.classList.toggle('visible');
+      findCkdToggleBtn.setAttribute('aria-expanded', findCkdDetail.classList.contains('visible') ? 'true' : 'false');
     });
 
     /* ====== Scroll-triggered animations ====== */
