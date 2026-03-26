@@ -731,6 +731,58 @@
       font-family: "Noto Serif TC", serif;
       font-size: 2rem;
     }
+    .guideline-grid {
+      display: grid;
+      gap: 16px;
+    }
+    .guideline-card {
+      border: 1px solid #2b436f;
+      border-radius: 14px;
+      background: linear-gradient(160deg, #0d1a34, #0a142a);
+      padding: 18px;
+    }
+    .guideline-btn {
+      width: 100%;
+      background: rgba(99, 214, 230, .14);
+      border: 1px solid var(--teal);
+      color: #dff6ff;
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: left;
+      letter-spacing: .02em;
+    }
+    .guideline-text {
+      margin: 12px 0 0;
+      min-height: 28px;
+      color: #c6f9ff;
+      text-shadow: 0 0 10px rgba(99, 214, 230, .45);
+    }
+    .potassium-image {
+      display: none;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .potassium-image.visible { display: grid; }
+    .potassium-box {
+      border-radius: 12px;
+      padding: 14px 14px 12px;
+      color: #1e2a42;
+      font-size: .95rem;
+      line-height: 1.45;
+      min-height: 190px;
+    }
+    .potassium-box h4 {
+      margin: 0 0 8px;
+      font-size: 1.65rem;
+      font-family: "Noto Serif TC", serif;
+    }
+    .potassium-box ul { margin: 0; padding-left: 18px; }
+    .potassium-box.green { background: #c5d4ad; }
+    .potassium-box.orange { background: #eec58f; }
+    .potassium-box.pink { background: #e9b29f; }
 
     @media (max-width: 1200px) {
       .side-rail { display: none; }
@@ -758,6 +810,7 @@
     <button class="side-item" data-target="chapter5" aria-label="Comparison with Pivotal Trials"><span class="side-dot"></span><span class="side-label">Comparison with Pivotal Trials</span></button>
     <button class="side-item" data-target="chapter5b" aria-label="Discussion Insights"><span class="side-dot"></span><span class="side-label">Discussion Insights</span></button>
     <button class="side-item" data-target="chapter6" aria-label="Strengths & Limitations"><span class="side-dot"></span><span class="side-label">Strengths & Limitations</span></button>
+    <button class="side-item" data-target="chapter7" aria-label="KDIGO 2026 Diabetes and CKD Guideline"><span class="side-dot"></span><span class="side-label">KDIGO 2026 Diabetes and CKD Guideline</span></button>
   </nav>
 
   <header id="hero" class="container">
@@ -1324,6 +1377,56 @@
         </article>
       </div>
     </section>
+
+    <!-- ==================== CHAPTER VII: KDIGO 2026 Guideline ==================== -->
+    <section id="chapter7">
+      <div class="chapter-title">
+        <small>Chapter VII</small>
+        <h2>KDIGO 2026 Diabetes and CKD Guideline</h2>
+      </div>
+
+      <div class="guideline-grid">
+        <article class="guideline-card">
+          <button class="guideline-btn" id="kdigoRecoBtn">Clinical Recommendation &amp; Initiation of Finerenone</button>
+          <p class="guideline-text typing-glow" id="kdigoRecoText"></p>
+        </article>
+
+        <article class="guideline-card">
+          <button class="guideline-btn" id="kdigoComboBtn">Combination Therapy with SGLT2i</button>
+          <p class="guideline-text typing-glow" id="kdigoComboText"></p>
+        </article>
+
+        <article class="guideline-card">
+          <button class="guideline-btn" id="kdigoHyperBtn">Hyperkalemia - Monitoring and Management</button>
+          <div id="kdigoHyperImage" class="potassium-image">
+            <div class="potassium-box green">
+              <h4>K⁺ ≤4.8 mmol/l</h4>
+              <ul>
+                <li>Initiate finerenone (10 mg if eGFR 25–59; 20 mg if eGFR ≥60)</li>
+                <li>Monitor K⁺ at 1 month then every 4 months</li>
+                <li>Increase to 20 mg daily if currently on 10 mg</li>
+              </ul>
+            </div>
+            <div class="potassium-box orange">
+              <h4>K⁺ 4.9–5.5 mmol/l</h4>
+              <ul>
+                <li>Continue finerenone 10 mg or 20 mg</li>
+                <li>Monitor K⁺ every 4 months</li>
+              </ul>
+            </div>
+            <div class="potassium-box pink">
+              <h4>K⁺ &gt;5.5 mmol/l</h4>
+              <ul>
+                <li>Hold finerenone</li>
+                <li>Adjust diet or concomitant medications to mitigate hyperkalemia</li>
+                <li>Recheck K⁺ and consider reinitiation if/when K⁺ ≤5.0 mmol/l</li>
+              </ul>
+            </div>
+          </div>
+          <p class="guideline-text typing-glow" id="kdigoHyperText"></p>
+        </article>
+      </div>
+    </section>
   </main>
 
   <footer>
@@ -1561,6 +1664,35 @@ real-world 情境下的 dietary potassium 攝取不一`;
         i += 1;
         if (i >= moreHyperkalemiaSentence.length) clearInterval(typer);
       }, 45);
+    });
+
+    function typeSentence(target, sentence, speed = 34) {
+      target.textContent = '';
+      let i = 0;
+      const typer = setInterval(() => {
+        target.textContent += sentence[i];
+        i += 1;
+        if (i >= sentence.length) clearInterval(typer);
+      }, speed);
+    }
+
+    const kdigoRecoBtn = document.getElementById('kdigoRecoBtn');
+    const kdigoRecoText = document.getElementById('kdigoRecoText');
+    const kdigoRecoSentence = "We suggest a nonsteroidal mineralocorticoid receptor antagonist (nsMRA) with proven kidney or cardiovascular benefit for patients with type 2 diabetes, an eGFR ≥25 ml/min/1.73 m², normal serum potassium concentration, and albuminuria (≥30 mg/g [≥3 mg/mmol]) despite maximum tolerated dose of RAS inhibitor.";
+    kdigoRecoBtn?.addEventListener('click', () => typeSentence(kdigoRecoText, kdigoRecoSentence, 22));
+
+    const kdigoComboBtn = document.getElementById('kdigoComboBtn');
+    const kdigoComboText = document.getElementById('kdigoComboText');
+    const kdigoComboSentence = "SGLT2 inhibitors may mitigate the risk of hyperkalemia associated with nonsteroidal MRAs.";
+    kdigoComboBtn?.addEventListener('click', () => typeSentence(kdigoComboText, kdigoComboSentence, 24));
+
+    const kdigoHyperBtn = document.getElementById('kdigoHyperBtn');
+    const kdigoHyperText = document.getElementById('kdigoHyperText');
+    const kdigoHyperImage = document.getElementById('kdigoHyperImage');
+    const kdigoHyperSentence = "If serum potassium increases, interventions such as dietary restriction of potassium, use of potassium binders, or dose reduction should be considered rather than permanent discontinuation.";
+    kdigoHyperBtn?.addEventListener('click', () => {
+      kdigoHyperImage.classList.add('visible');
+      typeSentence(kdigoHyperText, kdigoHyperSentence, 22);
     });
 
     /* ====== Scroll-triggered animations ====== */
