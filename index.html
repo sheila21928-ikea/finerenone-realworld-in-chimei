@@ -79,6 +79,10 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .side-label.multiline {
+      white-space: normal;
+      line-height: 1.18;
+    }
 
     .side-dot {
       width: 10px;
@@ -759,6 +763,97 @@
       color: #c6f9ff;
       text-shadow: 0 0 10px rgba(99, 214, 230, .45);
     }
+    .kdigo-two-line {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.2;
+      gap: 6px;
+    }
+    .kdigo-two-line .subline {
+      font-size: clamp(1.15rem, 3.2vw, 2.2rem);
+      color: #bfd0ea;
+      font-family: "Inter", system-ui, sans-serif;
+      font-weight: 600;
+    }
+    .chapter8-table-wrap { overflow-x: auto; }
+    .chapter8-table {
+      width: 100%;
+      min-width: 900px;
+      border-collapse: collapse;
+      background: rgba(10, 20, 40, .72);
+      border: 1px solid #2d436f;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .chapter8-table th {
+      background: #3f2d20;
+      color: #f7f0e8;
+      font-size: 1.05rem;
+      letter-spacing: .02em;
+      text-transform: none;
+      padding: 14px 10px;
+      text-align: center;
+    }
+    .chapter8-table td {
+      border-top: 1px solid #344d7d;
+      border-right: 1px solid #344d7d;
+      padding: 14px 10px;
+      text-align: center;
+      color: #ebf2ff;
+      font-size: 1.02rem;
+      line-height: 1.4;
+    }
+    .chapter8-table td:last-child,
+    .chapter8-table th:last-child { border-right: none; }
+    .chapter8-table td.trial-name { font-weight: 700; }
+    .trial-btn {
+      background: rgba(227, 199, 132, .14);
+      color: #f8d79e;
+      border: 1px solid #e3c784;
+      border-radius: 8px;
+      padding: 7px 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .status-green { color: #91d39b; font-weight: 700; }
+    .status-orange { color: #f0ae68; font-weight: 700; }
+    .status-gray { color: #b9b0a2; font-weight: 700; }
+    .finearts-detail {
+      margin-top: 16px;
+      display: none;
+      border-left: 4px solid #f0ae68;
+      background: rgba(240, 174, 104, .12);
+      border-radius: 0 12px 12px 0;
+      padding: 16px 20px;
+      color: #f9efe2;
+    }
+    .finearts-detail.visible { display: block; }
+    .finearts-topline {
+      background: #8b5255;
+      color: #fff0f1;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin: 10px 0 14px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .finearts-metric {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .finearts-metric strong {
+      font-size: 3.2rem;
+      line-height: 1;
+      color: #f0ae68;
+      font-family: "Noto Serif TC", serif;
+    }
+    .finearts-detail ul { margin: 0; padding-left: 22px; }
+    .finearts-detail li { margin: 6px 0; }
     .potassium-image {
       display: none;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -810,7 +905,8 @@
     <button class="side-item" data-target="chapter5" aria-label="Comparison with Pivotal Trials"><span class="side-dot"></span><span class="side-label">Comparison with Pivotal Trials</span></button>
     <button class="side-item" data-target="chapter5b" aria-label="Discussion Insights"><span class="side-dot"></span><span class="side-label">Discussion Insights</span></button>
     <button class="side-item" data-target="chapter6" aria-label="Strengths & Limitations"><span class="side-dot"></span><span class="side-label">Strengths & Limitations</span></button>
-    <button class="side-item" data-target="chapter7" aria-label="KDIGO 2026 Diabetes and CKD Guideline"><span class="side-dot"></span><span class="side-label">KDIGO 2026 Diabetes and CKD Guideline</span></button>
+    <button class="side-item" data-target="chapter7" aria-label="KDIGO 2026 Diabetes and CKD Guideline"><span class="side-dot"></span><span class="side-label multiline">KDIGO<br>2026 Diabetes and CKD Guideline</span></button>
+    <button class="side-item" data-target="chapter8" aria-label="Beyond T2DM: New Horizons"><span class="side-dot"></span><span class="side-label">Beyond T2DM: New Horizons</span></button>
   </nav>
 
   <header id="hero" class="container">
@@ -1382,7 +1478,7 @@
     <section id="chapter7">
       <div class="chapter-title">
         <small>Chapter VII</small>
-        <h2>KDIGO 2026 Diabetes and CKD Guideline</h2>
+        <h2 class="kdigo-two-line"><span>KDIGO</span><span class="subline">2026 Diabetes and CKD Guideline</span></h2>
       </div>
 
       <div class="guideline-grid">
@@ -1424,6 +1520,111 @@
             </div>
           </div>
           <p class="guideline-text typing-glow" id="kdigoHyperText"></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ==================== CHAPTER VIII: Beyond T2DM ==================== -->
+    <section id="chapter8">
+      <div class="chapter-title">
+        <small>Chapter VIII</small>
+        <h2>Beyond T2DM: New Horizons</h2>
+      </div>
+
+      <div class="panel">
+        <div class="chapter8-table-wrap">
+          <table class="chapter8-table" aria-label="Finerenone trial comparison table">
+            <thead>
+              <tr>
+                <th>Trial</th>
+                <th>Population</th>
+                <th>N</th>
+                <th>Status</th>
+                <th>Key Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="trial-name">FIDELIO-DKD</td>
+                <td>CKD stage 3-4 + T2D</td>
+                <td>5,734</td>
+                <td class="status-green">Completed</td>
+                <td>Kidney composite ↓18%</td>
+              </tr>
+              <tr>
+                <td class="trial-name">FIGARO-DKD</td>
+                <td>CKD stage 1-4 + T2D</td>
+                <td>7,437</td>
+                <td class="status-green">Completed</td>
+                <td>CV composite ↓13%</td>
+              </tr>
+              <tr>
+                <td class="trial-name">
+                  <button id="fineartsToggleBtn" class="trial-btn" type="button">FINEARTS-HF</button>
+                </td>
+                <td>HF with LVEF ≥40%</td>
+                <td>6,001</td>
+                <td class="status-orange">FDA approved</td>
+                <td>WHF + CV death ↓16%</td>
+              </tr>
+              <tr>
+                <td class="trial-name">FINE-ONE</td>
+                <td>T1D + CKD</td>
+                <td>242</td>
+                <td class="status-orange">Positive results</td>
+                <td>UACR ↓25%</td>
+              </tr>
+              <tr>
+                <td class="trial-name">FIND-CKD</td>
+                <td>Non-diabetic CKD (incl. IgAN)</td>
+                <td>1,584</td>
+                <td class="status-orange">Primary EP met</td>
+                <td>eGFR slope improved</td>
+              </tr>
+              <tr>
+                <td class="trial-name">CONFIDENCE</td>
+                <td>CKD + T2D (combo with SGLT2i)</td>
+                <td>800</td>
+                <td class="status-green">Completed</td>
+                <td>UACR ↓52% combo</td>
+              </tr>
+              <tr>
+                <td class="trial-name">FINALITY-HF</td>
+                <td>HF (intolerant to steroidal MRA)</td>
+                <td>—</td>
+                <td class="status-gray">Ongoing</td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td class="trial-name">IgAN trial</td>
+                <td>IgA nephropathy</td>
+                <td>—</td>
+                <td class="status-gray">Recruiting</td>
+                <td>NCT06580288</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <article id="fineartsDetail" class="finearts-detail" aria-live="polite">
+          <h3 style="margin:0 0 6px;">❤️ FINEARTS-HF: Heart Failure with LVEF ≥40%</h3>
+          <div class="finearts-topline">NEJM 2024 ｜ N = 6,001 ｜ Median follow-up 32 months ｜ HFmrEF / HFpEF</div>
+          <div class="finearts-metric">
+            <strong>16%</strong>
+            <div>
+              <div style="font-size:1.55rem;font-weight:700;">reduction in primary composite</div>
+              <div style="font-size:1.3rem;">(total worsening HF events + CV death)</div>
+              <div style="font-size:1.3rem;font-style:italic;">RR 0.84 (0.74-0.95), p=0.007</div>
+            </div>
+          </div>
+          <ul>
+            <li>Worsening HF events: ↓18% (RR 0.82, p=0.006)</li>
+            <li>CV death: HR 0.93 (0.78-1.11) — not significant</li>
+            <li>Benefits consistent across LVEF spectrum (40% to ≥60%)</li>
+            <li>Consistent regardless of SGLT2i use at baseline</li>
+            <li>Effective in severe HF (ESC-HFA definition)</li>
+            <li style="color:#f0ae68;font-weight:700;">FDA approved for HF with LVEF ≥40% in July 2025</li>
+          </ul>
         </article>
       </div>
     </section>
@@ -1693,6 +1894,13 @@ real-world 情境下的 dietary potassium 攝取不一`;
     kdigoHyperBtn?.addEventListener('click', () => {
       kdigoHyperImage.classList.add('visible');
       typeSentence(kdigoHyperText, kdigoHyperSentence, 22);
+    });
+
+    const fineartsToggleBtn = document.getElementById('fineartsToggleBtn');
+    const fineartsDetail = document.getElementById('fineartsDetail');
+    fineartsToggleBtn?.addEventListener('click', () => {
+      fineartsDetail.classList.toggle('visible');
+      fineartsToggleBtn.setAttribute('aria-expanded', fineartsDetail.classList.contains('visible') ? 'true' : 'false');
     });
 
     /* ====== Scroll-triggered animations ====== */
