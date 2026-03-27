@@ -395,12 +395,22 @@
     .birthday-cake {
       display: none;
       margin-top: 14px;
+      position: relative;
+      width: 220px;
+      height: 170px;
       justify-content: center;
       align-items: flex-end;
-      gap: 6px;
-      min-height: 150px;
     }
     .birthday-cake.visible { display: flex; }
+    .candle-row {
+      position: absolute;
+      left: 50%;
+      bottom: 94px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 2;
+    }
     .candle {
       width: 9px;
       height: 40px;
@@ -411,7 +421,6 @@
         #f4a9a9 4px 8px
       );
       position: relative;
-      top: 5px;
       box-shadow: inset 0 0 4px rgba(120, 53, 53, .35);
     }
     .candle::before {
@@ -440,7 +449,10 @@
       border-radius: 16px 16px 22px 22px;
       background: linear-gradient(180deg, #ffb8be 0%, #ff8fa8 54%, #f06b8f 100%);
       border: 2px solid rgba(255, 244, 244, .26);
-      position: relative;
+      position: absolute;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
       box-shadow: 0 10px 26px rgba(34, 13, 41, .4);
     }
     .cake-base::before {
@@ -1844,10 +1856,12 @@
       <button id="birthdayTrigger" class="birthday-trigger" type="button">Join - Jolin?</button>
       <div id="birthdayMessage" class="birthday-message" aria-live="polite"></div>
       <div id="birthdayCake" class="birthday-cake" aria-hidden="true">
-        <span class="candle"></span>
-        <span class="candle"></span>
-        <span class="candle"></span>
         <span class="cake-base"></span>
+        <div class="candle-row" aria-hidden="true">
+          <span class="candle"></span>
+          <span class="candle"></span>
+          <span class="candle"></span>
+        </div>
       </div>
     </div>
     Chi Mei Medical Center · Teaching Department & General Internal Medicine
