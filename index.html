@@ -505,7 +505,7 @@
     }
     .flow-arrow-note {
       position: absolute;
-      left: 18px;
+      left: calc(100% + 12px);
       top: 50%;
       transform: translateY(-50%);
       background: rgba(141, 79, 86, .3);
@@ -514,7 +514,9 @@
       padding: 8px 14px;
       font-size: .82rem;
       color: var(--rose);
-      white-space: nowrap;
+      white-space: normal;
+      width: min(320px, calc(100vw - 80px));
+      overflow-wrap: anywhere;
     }
     .flow-arrow::after {
       content: "▼";
@@ -1097,7 +1099,8 @@
         position: static;
         transform: none;
         margin: 8px 0;
-        white-space: normal;
+        width: 100%;
+        text-align: center;
       }
       .flow-exclude {
         position: static;
