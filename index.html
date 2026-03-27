@@ -504,19 +504,18 @@
       position: relative;
     }
     .flow-arrow-note {
-      position: absolute;
-      left: calc(100% + 12px);
-      top: 50%;
-      transform: translateY(-50%);
       background: rgba(141, 79, 86, .3);
       border: 1px solid #8d4f56;
       border-radius: 10px;
-      padding: 8px 14px;
+      padding: 10px 14px;
       font-size: .82rem;
       color: var(--rose);
+      text-align: center;
+      max-width: 420px;
+      width: min(100%, 420px);
       white-space: normal;
-      width: min(320px, calc(100vw - 80px));
-      overflow-wrap: anywhere;
+      overflow-wrap: break-word;
+      line-height: 1.45;
     }
     .flow-arrow::after {
       content: "▼";
@@ -1096,11 +1095,8 @@
       .flow-box { max-width: 100%; padding: 12px 14px; }
       .flow-box strong { font-size: 1.25rem; }
       .flow-arrow-note {
-        position: static;
-        transform: none;
-        margin: 8px 0;
-        width: 100%;
-        text-align: center;
+        margin: 8px auto;
+        width: min(100%, 320px);
       }
       .flow-exclude {
         position: static;
@@ -1216,9 +1212,9 @@
             <strong>171</strong>
             <span>Newly prescribed finerenone (first-time use)</span>
           </div>
-          <div class="flow-arrow" style="position:relative;">
-            <div class="flow-arrow-note">Excluded: 5 patients with AKI or hyperkalemia within 1 month prior</div>
-          </div>
+          <div class="flow-arrow"></div>
+          <div class="flow-arrow-note">Excluded: 5 patients with AKI or hyperkalemia within 1 month prior</div>
+          <div class="flow-arrow"></div>
           <div class="flow-box">
             <strong style="color:var(--gold);">166</strong>
             <span>Final analysis cohort</span>
