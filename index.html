@@ -194,6 +194,31 @@
       opacity: .9;
     }
 
+    .mentor-message {
+      margin: 18px auto 0;
+      max-width: 920px;
+      min-height: 1.8em;
+      color: #ffe38a;
+      font-size: clamp(1rem, 1.95vw, 1.22rem);
+      letter-spacing: .02em;
+      line-height: 1.55;
+      text-shadow: 0 0 8px rgba(255, 224, 120, .85), 0 0 20px rgba(255, 188, 66, .58);
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity .35s ease, transform .35s ease;
+    }
+
+    .mentor-message.show {
+      opacity: 1;
+      transform: translateY(0);
+      animation: mentorGoldenPulse 1.4s ease-in-out infinite alternate;
+    }
+
+    @keyframes mentorGoldenPulse {
+      from { text-shadow: 0 0 7px rgba(255, 226, 120, .78), 0 0 18px rgba(255, 182, 58, .45); }
+      to { text-shadow: 0 0 12px rgba(255, 232, 146, .98), 0 0 26px rgba(255, 198, 92, .78); }
+    }
+
     @media (max-width: 640px) {
       .mentor-photo-wrap.show {
         max-height: 72vh;
@@ -1262,6 +1287,7 @@
           fetchpriority="high"
         >
         <p id="mentorPhotoStatus" class="mentor-photo-status" hidden>照片載入中，請稍候…</p>
+        <p id="mentorQuote" class="mentor-message" aria-live="polite"></p>
       </div>
       <p class="hero-sub">166 patients, 3 hospital sites, and real-world evidence.<br>An interactive dashboard to interpret Finerenone clinical efficacy and safety.</p>
       <div class="heartbeat" aria-hidden="true"></div>
@@ -2430,6 +2456,9 @@ real-world 情境下的 dietary potassium 攝取不一`;
     const mentorPhotoWrap = document.getElementById('mentorPhotoWrap');
     const mentorPhoto = document.getElementById('mentorPhoto');
     const mentorPhotoStatus = document.getElementById('mentorPhotoStatus');
+    const mentorQuote = document.getElementById('mentorQuote');
+    const mentorSentence = 'Mentor, Coach, and the ONE want our environment to become a place that holds space for everyone.';
+    let mentorTyperTimer = null;
     const rawMentorPhotoFallbackSources = mentorPhoto?.dataset.fallbackSrcs
       ? mentorPhoto.dataset.fallbackSrcs.split(',').map((src) => src.trim()).filter(Boolean)
       : [];
@@ -2483,6 +2512,28 @@ real-world 情境下的 dietary potassium 攝取不一`;
       mentorPhotoBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
       if (isOpen && mentorPhotoStatus && !mentorPhoto.complete) {
         mentorPhotoStatus.hidden = false;
+      }
+      if (mentorQuote) {
+        if (mentorTyperTimer) {
+          clearInterval(mentorTyperTimer);
+          mentorTyperTimer = null;
+        }
+        if (isOpen) {
+          mentorQuote.textContent = '';
+          mentorQuote.classList.add('show');
+          let index = 0;
+          mentorTyperTimer = setInterval(() => {
+            mentorQuote.textContent += mentorSentence[index];
+            index += 1;
+            if (index >= mentorSentence.length) {
+              clearInterval(mentorTyperTimer);
+              mentorTyperTimer = null;
+            }
+          }, 44);
+        } else {
+          mentorQuote.classList.remove('show');
+          mentorQuote.textContent = '';
+        }
       }
     });
 
