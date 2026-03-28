@@ -174,26 +174,6 @@
       margin-top: 20px;
     }
 
-    .mentor-photo {
-      width: 100%;
-      max-width: 980px;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-      border-radius: 18px;
-      box-shadow: 0 0 35px rgba(0, 0, 0, .52);
-      filter: saturate(1.04) contrast(1.02);
-      object-fit: contain;
-      background: rgba(6, 16, 39, .92);
-    }
-
-    .mentor-photo-status {
-      margin-top: 10px;
-      font-size: .95rem;
-      color: #d7e9ff;
-      opacity: .9;
-    }
-
     .mentor-message {
       margin: 18px auto 0;
       max-width: 920px;
@@ -222,10 +202,6 @@
     @media (max-width: 640px) {
       .mentor-photo-wrap.show {
         max-height: 72vh;
-      }
-
-      .mentor-photo {
-        border-radius: 14px;
       }
     }
 
@@ -1276,17 +1252,6 @@
       <p class="hero-sub">Mentor C.T. Liao</p>
       <button id="mentorPhotoBtn" class="mentor-trigger" type="button" aria-expanded="false" aria-controls="mentorPhotoWrap">Mentor C.T. Liao ✨</button>
       <div id="mentorPhotoWrap" class="mentor-photo-wrap" aria-live="polite">
-        <img
-          id="mentorPhoto"
-          class="mentor-photo"
-          src="./mentor-ct-liao-group.jpg"
-          data-fallback-srcs="mentor-ct-liao-group.jpg,mentor-ct-liao-group.jpeg,mentor-ct-liao-group.png,mentor-ct-liao.jpg,mentor-ct-liao.jpeg,mentor-ct-liao.JPG,mentor-ct-liao.JPEG,mentor-ct-liao.png,mentor-ct-liao.webp,mentor-ct-liao-team.jpg,mentor-ct-liao-team.jpeg,mentor-ct-liao-team.png,image.jpg,image.jpeg,image.png,photo.jpg,photo.jpeg,photo.png"
-          alt="Mentor C.T. Liao 團隊合照"
-          loading="eager"
-          decoding="async"
-          fetchpriority="high"
-        >
-        <p id="mentorPhotoStatus" class="mentor-photo-status" hidden>照片載入中，請稍候…</p>
         <p id="mentorQuote" class="mentor-message" aria-live="polite"></p>
       </div>
       <p class="hero-sub">166 patients, 3 hospital sites, and real-world evidence.<br>An interactive dashboard to interpret Finerenone clinical efficacy and safety.</p>
@@ -2454,65 +2419,13 @@ real-world 情境下的 dietary potassium 攝取不一`;
 
     const mentorPhotoBtn = document.getElementById('mentorPhotoBtn');
     const mentorPhotoWrap = document.getElementById('mentorPhotoWrap');
-    const mentorPhoto = document.getElementById('mentorPhoto');
-    const mentorPhotoStatus = document.getElementById('mentorPhotoStatus');
     const mentorQuote = document.getElementById('mentorQuote');
     const mentorSentence = 'Mentor, Coach, and the ONE want our environment to become a place that holds space for everyone.';
     let mentorTyperTimer = null;
-    const rawMentorPhotoFallbackSources = mentorPhoto?.dataset.fallbackSrcs
-      ? mentorPhoto.dataset.fallbackSrcs.split(',').map((src) => src.trim()).filter(Boolean)
-      : [];
-
-    const mentorPhotoFallbackSources = (() => {
-      if (!mentorPhoto) return [];
-      const pageDir = new URL('.', window.location.href);
-      const sourceCandidates = [mentorPhoto.getAttribute('src') || '', ...rawMentorPhotoFallbackSources];
-      const urls = sourceCandidates.flatMap((source) => {
-        if (!source) return [];
-        const trimmed = source.trim();
-        if (!trimmed) return [];
-        if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith('data:')) return [trimmed];
-        const normalized = trimmed.replace(/^\.\//, '');
-        return [
-          new URL(normalized, pageDir).href,
-          `${window.location.origin}/${normalized}`
-        ];
-      });
-      return [...new Set(urls)];
-    })();
-
-    let mentorPhotoFallbackIndex = -1;
-
-    const loadNextMentorPhotoSource = () => {
-      if (!mentorPhoto) return;
-      mentorPhotoFallbackIndex += 1;
-      if (mentorPhotoFallbackIndex < mentorPhotoFallbackSources.length) {
-        mentorPhoto.src = mentorPhotoFallbackSources[mentorPhotoFallbackIndex];
-        if (mentorPhotoStatus) mentorPhotoStatus.hidden = false;
-        return;
-      }
-      if (mentorPhotoStatus) {
-        mentorPhotoStatus.hidden = false;
-        mentorPhotoStatus.textContent = '照片檔案未找到，請將團隊合照放在專案根目錄，檔名建議使用 mentor-ct-liao-group.jpg（也支援 .jpeg/.png/.webp）。';
-      }
-    };
-
-    mentorPhoto?.addEventListener('error', () => {
-      loadNextMentorPhotoSource();
-    });
-
-    mentorPhoto?.addEventListener('load', () => {
-      if (!mentorPhotoStatus) return;
-      mentorPhotoStatus.hidden = true;
-      mentorPhotoStatus.textContent = '照片載入中，請稍候…';
-    });
 
     mentorPhotoBtn?.addEventListener('click', () => {
       const isOpen = mentorPhotoWrap.classList.toggle('show');
       mentorPhotoBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      if (isOpen && mentorPhotoStatus && !mentorPhoto.complete) {
-        mentorPhotoStatus.hidden = false;
-      }
       if (mentorQuote) {
         if (mentorTyperTimer) {
           clearInterval(mentorTyperTimer);
