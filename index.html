@@ -182,6 +182,21 @@
       mask-image: radial-gradient(circle at center, #000 65%, transparent 100%);
     }
 
+    .mentor-photo-status {
+      margin-top: 10px;
+      font-size: .95rem;
+      color: #d7e9ff;
+      opacity: .9;
+    }
+
+    @media (max-width: 640px) {
+      .mentor-photo {
+        -webkit-mask-image: none;
+        mask-image: none;
+        border-radius: 14px;
+      }
+    }
+
     .heartbeat {
       width: min(860px, 100%);
       margin: 42px auto 20px;
@@ -1229,7 +1244,17 @@
       <p class="hero-sub">Mentor C.T. Liao</p>
       <button id="mentorPhotoBtn" class="mentor-trigger" type="button" aria-expanded="false" aria-controls="mentorPhotoWrap">Mentor C.T. Liao ✨</button>
       <div id="mentorPhotoWrap" class="mentor-photo-wrap" aria-live="polite">
-        <img class="mentor-photo" src="./mentor-ct-liao.jpg" alt="Mentor C.T. Liao 團隊合照" loading="lazy">
+        <img
+          id="mentorPhoto"
+          class="mentor-photo"
+          src="./mentor-ct-liao.jpg"
+          data-fallback-srcs="./mentor-ct-liao.jpeg,./mentor-ct-liao.JPG,./mentor-ct-liao.JPEG,./mentor-ct-liao.png,./mentor-ct-liao.webp,/mentor-ct-liao.jpg,/mentor-ct-liao.jpeg,/mentor-ct-liao.JPG,/mentor-ct-liao.JPEG,/mentor-ct-liao.png,/mentor-ct-liao.webp"
+          alt="Mentor C.T. Liao 團隊合照"
+          loading="eager"
+          decoding="async"
+          fetchpriority="high"
+        >
+        <p id="mentorPhotoStatus" class="mentor-photo-status" hidden>照片載入中，請稍候…</p>
       </div>
       <p class="hero-sub">166 patients, 3 hospital sites, and real-world evidence.<br>An interactive dashboard to interpret Finerenone clinical efficacy and safety.</p>
       <div class="heartbeat" aria-hidden="true"></div>
@@ -2396,9 +2421,43 @@ real-world 情境下的 dietary potassium 攝取不一`;
 
     const mentorPhotoBtn = document.getElementById('mentorPhotoBtn');
     const mentorPhotoWrap = document.getElementById('mentorPhotoWrap');
+    const mentorPhoto = document.getElementById('mentorPhoto');
+    const mentorPhotoStatus = document.getElementById('mentorPhotoStatus');
+    const mentorPhotoFallbackSources = mentorPhoto?.dataset.fallbackSrcs
+      ? mentorPhoto.dataset.fallbackSrcs.split(',').map((src) => src.trim()).filter(Boolean)
+      : [];
+    let mentorPhotoFallbackIndex = -1;
+
+    const loadNextMentorPhotoSource = () => {
+      if (!mentorPhoto) return;
+      mentorPhotoFallbackIndex += 1;
+      if (mentorPhotoFallbackIndex < mentorPhotoFallbackSources.length) {
+        mentorPhoto.src = mentorPhotoFallbackSources[mentorPhotoFallbackIndex];
+        if (mentorPhotoStatus) mentorPhotoStatus.hidden = false;
+        return;
+      }
+      if (mentorPhotoStatus) {
+        mentorPhotoStatus.hidden = false;
+        mentorPhotoStatus.textContent = '照片檔案未找到，請確認已上傳 mentor-ct-liao 圖片檔。';
+      }
+    };
+
+    mentorPhoto?.addEventListener('error', () => {
+      loadNextMentorPhotoSource();
+    });
+
+    mentorPhoto?.addEventListener('load', () => {
+      if (!mentorPhotoStatus) return;
+      mentorPhotoStatus.hidden = true;
+      mentorPhotoStatus.textContent = '照片載入中，請稍候…';
+    });
+
     mentorPhotoBtn?.addEventListener('click', () => {
       const isOpen = mentorPhotoWrap.classList.toggle('show');
       mentorPhotoBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      if (isOpen && mentorPhotoStatus && !mentorPhoto.complete) {
+        mentorPhotoStatus.hidden = false;
+      }
     });
 
     birthdayTrigger?.addEventListener('click', () => {
