@@ -133,6 +133,55 @@
       font-size: clamp(1.05rem, 2vw, 1.35rem);
     }
 
+    .mentor-trigger {
+      margin-top: 20px;
+      padding: 12px 24px;
+      border-radius: 999px;
+      border: 1px solid #72ebff;
+      background: linear-gradient(140deg, rgba(20, 41, 78, .95), rgba(8, 22, 46, .95));
+      color: #dff8ff;
+      font-size: clamp(1.02rem, 2.1vw, 1.22rem);
+      font-weight: 700;
+      letter-spacing: .05em;
+      cursor: pointer;
+      text-shadow: 0 0 7px rgba(143, 246, 255, .95), 0 0 18px rgba(90, 203, 255, .7);
+      box-shadow: 0 0 0 rgba(99, 214, 230, 0), 0 0 18px rgba(99, 214, 230, .35), inset 0 0 14px rgba(95, 186, 255, .2);
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+
+    .mentor-trigger:hover,
+    .mentor-trigger:focus-visible {
+      outline: none;
+      transform: translateY(-2px) scale(1.01);
+      border-color: #a4f5ff;
+      box-shadow: 0 0 20px rgba(99, 214, 230, .75), 0 0 36px rgba(99, 214, 230, .45), inset 0 0 22px rgba(120, 224, 255, .4);
+    }
+
+    .mentor-photo-wrap {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height .6s ease, opacity .4s ease, margin-top .4s ease;
+      margin-top: 0;
+    }
+
+    .mentor-photo-wrap.show {
+      max-height: 820px;
+      opacity: 1;
+      margin-top: 20px;
+    }
+
+    .mentor-photo {
+      width: min(900px, 100%);
+      display: block;
+      margin: 0 auto;
+      border-radius: 18px;
+      box-shadow: 0 0 35px rgba(0, 0, 0, .52);
+      filter: saturate(1.04) contrast(1.02);
+      -webkit-mask-image: radial-gradient(circle at center, #000 65%, transparent 100%);
+      mask-image: radial-gradient(circle at center, #000 65%, transparent 100%);
+    }
+
     .heartbeat {
       width: min(860px, 100%);
       margin: 42px auto 20px;
@@ -1178,6 +1227,10 @@
       <h1>Finerenone<br>Real-World Experience in Chimei</h1>
       <p class="hero-sub">Chi-Ya, Huang &amp; I-Ning, Yang</p>
       <p class="hero-sub">Mentor C.T. Liao</p>
+      <button id="mentorPhotoBtn" class="mentor-trigger" type="button" aria-expanded="false" aria-controls="mentorPhotoWrap">Mentor C.T. Liao ✨</button>
+      <div id="mentorPhotoWrap" class="mentor-photo-wrap" aria-live="polite">
+        <img class="mentor-photo" src="./mentor-ct-liao.jpg" alt="Mentor C.T. Liao 團隊合照" loading="lazy">
+      </div>
       <p class="hero-sub">166 patients, 3 hospital sites, and real-world evidence.<br>An interactive dashboard to interpret Finerenone clinical efficacy and safety.</p>
       <div class="heartbeat" aria-hidden="true"></div>
     </div>
@@ -2340,6 +2393,13 @@ real-world 情境下的 dietary potassium 攝取不一`;
     const birthdayMessage = document.getElementById('birthdayMessage');
     const birthdayCake = document.getElementById('birthdayCake');
     const birthdaySentence = '久令 生日快樂！！';
+
+    const mentorPhotoBtn = document.getElementById('mentorPhotoBtn');
+    const mentorPhotoWrap = document.getElementById('mentorPhotoWrap');
+    mentorPhotoBtn?.addEventListener('click', () => {
+      const isOpen = mentorPhotoWrap.classList.toggle('show');
+      mentorPhotoBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
 
     birthdayTrigger?.addEventListener('click', () => {
       birthdayMessage.textContent = '';
